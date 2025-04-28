@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  mediapipe-runner:
+    build:
+      context: ./mediapipe
+    volumes:
+      - ./data:/data
+    container_name: mediapipe-container
+    restart: "no"
