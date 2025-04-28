@@ -8,3 +8,10 @@ services:
       - ./data:/data
     container_name: mediapipe-container
     restart: "no"
+
+  lightweight:
+    build: ./lightweight
+    volumes:
+      - ./data:/data
+    container_name: lightweight
+    restart: "no"
