@@ -13,5 +13,12 @@ services:
     build: ./lightweight
     volumes:
       - ./data:/data
-    container_name: lightweight
+    container_name: lightweight-container
+    restart: "no"
+
+  hrnet:
+    build: ./hrnet
+    volumes:
+      - ./data:/data
+    container_name: hrnet-container
     restart: "no"
