@@ -30,4 +30,4 @@ RUN wget https://download.01.org/opencv/openvino_training_extensions/models/huma
 WORKDIR /app
 COPY lw.py .
 
-CMD ["python", "lw.py"]
+CMD ["python", "lw.py", "--checkpoint-path", "/app/pose_estimation/models/checkpoint_iter_370000.pth", "--video", "/data/input.mp4", "--output-video", "/data/lightweight.mp4", "--cpu"]
