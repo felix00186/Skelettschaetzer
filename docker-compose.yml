@@ -5,20 +5,20 @@ services:
     build:
       context: ./mediapipe
     volumes:
-      - ./data:/data
+      - /srv/docker/skelettschaetzer/data:/data
     container_name: mediapipe-container
     restart: "no"
 
   lightweight:
     build: ./lightweight
     volumes:
-      - ./data:/data
+      - /srv/docker/skelettschaetzer/data:/data
     container_name: lightweight-container
     restart: "no"
 
   hrnet:
     build: ./hrnet
     volumes:
-      - ./data:/data
+      - /srv/docker/skelettschaetzer/data:/data
     container_name: hrnet-container
     restart: "no"

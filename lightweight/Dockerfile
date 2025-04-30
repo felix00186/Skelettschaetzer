@@ -3,24 +3,15 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # Grundpakete installieren
-RUN apt-get update
-RUN apt-get install -y git
-RUN apt-get install -y ffmpeg
-RUN apt-get install -y libsm6
-RUN apt-get install -y libxext6
-RUN apt-get install -y wget
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ffmpeg libsm6 libxext6 wget ca-certificates coreutils && \
+    rm -rf /var/lib/apt/lists/*
 
 # Python-Bibliotheken installieren
-RUN pip install torch
-RUN pip install torchvision
-RUN pip install opencv-python
-RUN pip install pycocotools
+RUN pip install torch torchvision opencv-python pycocotools
 
 # Lightweight HRNet-Repo klonen
 RUN git clone https://github.com/Daniil-Osokin/lightweight-human-pose-estimation.pytorch.git pose_estimation
-
-# Arbeitsverzeichnis wechseln
 WORKDIR /app/pose_estimation
 
 # Pretrained Modell herunterladen
