@@ -18,7 +18,7 @@ height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps = cap.get(cv2.CAP_PROP_FPS)
 
 # Optional: Ausgabevideo speichern
-out = cv2.VideoWriter('/data/mediapipe.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+out = cv2.VideoWriter('/data/blazepose.mp4', cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
 
 while cap.isOpened():
     success, frame = cap.read()
