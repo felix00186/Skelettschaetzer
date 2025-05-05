@@ -1,27 +1,17 @@
 version: '3.8'
 
 services:
-  mediapipe-runner:
+  blazepose:
     build:
-      context: ./mediapipe
+      context: ./blazepose
     volumes:
-      - ./data:/data
-      #- /srv/docker/skelettschaetzer/data:/data
-    container_name: mediapipe-container
+      - /srv/docker/skelettschaetzer/data:/data
+    container_name: blazepose-container
     restart: "no"
 
   lightweight:
     build: ./lightweight
     volumes:
-      - ./data:/data
-      #- /srv/docker/skelettschaetzer/data:/data
-    container_name: lightweight-container
-    restart: "no"
-
-  hrnet:
-    build: ./hrnet
-    volumes:
-      - ./data:/data
-      #- /srv/docker/skelettschaetzer/data:/data
-    container_name: hrnet-container
+      - /srv/docker/skelettschaetzer/data:/data
+    container_name: lightweight
     restart: "no"
