@@ -25,5 +25,4 @@ RUN chmod 777 download_weights.sh &&\
     ./download_weights.sh
 WORKDIR /simple-HRNet
 CMD python3 scripts/live-demo.py --filename /data/input.mp4 --save_video &&\
-    python3 -c "import time;time.sleep(1000)" &&\
     mv output.avi /data/hrnet.avi

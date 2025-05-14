@@ -23,3 +23,18 @@ services:
               count: all
               capabilities:
                 - gpu
+
+  hrnet:
+    build: ./hrnet
+    volumes:
+      - /srv/docker/skelettschaetzer/data:/data
+    container_name: hrnet
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
