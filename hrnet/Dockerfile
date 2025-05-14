@@ -1,28 +1,42 @@
-# Quelle: https://github.com/me-X-us/simple-HRNet-docker/blob/master/Dockerfile (bearbeitet)
-FROM ubuntu:20.04
+FROM python:3.6-slim
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe/Berlin
 RUN apt-get update &&\
-    DEBIAN_FRONTEND=noninteractive \
-    apt-get install -y --no-install-recommends git python3-pip ffmpeg libsm6 libxext6 curl unzip wget &&\
+    apt-get install -y --no-install-recommends git ffmpeg libsm6 libxext6 curl unzip tar wget make bzip2 &&\
     rm -rf /var/lib/apt/lists/* &&\
-    pip3 install gdown &&\
-    git clone https://github.com/stefanopini/simple-HRNet.git &&\
-    pip3 install -r /simple-HRNet/requirements.txt
-WORKDIR /simple-HRNet/models_
-RUN python3 -c "import gdown;gdown.download(id='1assh2z-rVLZRSiNZ-2EE7MedRDqwodeP', output='pytorch.zip')" &&\
-    unzip pytorch.zip -d ./pytorch &&\
-    rm ./pytorch.zip &&\
-    mkdir /simple-HRNet/weights &&\
-    python3 -c "import gdown;gdown.download(id='1UoJhTtjHNByZSm96W3yFTfU5upJnsKiS', output='/simple-HRNet/weights/pose_hrnet_w48_384x288.pth')"
-WORKDIR /simple-HRNet/models_/detectors
-RUN rm -d yolo &&\
-    wget https://github.com/eriklindernoren/PyTorch-YOLOv3/archive/47b7c912877ca69db35b8af3a38d6522681b3bb3.zip -O yolo.zip &&\
-    unzip yolo.zip -d ./yolo &&\
-    rm ./yolo.zip &&\
-    mv yolo/*/* yolo &&\
-    pip3 install -r yolo/requirements.txt
-WORKDIR /simple-HRNet/models_/detectors/yolo/weights
-RUN chmod 777 download_weights.sh &&\
-    ./download_weights.sh
-WORKDIR /simple-HRNet
-CMD python3 scripts/live-demo.py --filename /data/input.mp4 --save_video &&\
-    mv output.avi /data/hrnet.avi
+    pip install torch torchvision torchaudio gdown &&\
+    git clone https://github.com/leoxiaobin/deep-high-resolution-net.pytorch.git /app &&\
+    pip install -r /app/requirements.txt
+WORKDIR /app/lib
+RUN make &&\
+    git clone https://github.com/cocodataset/cocoapi.git /coco
+WORKDIR /coco/PythonAPI
+RUN make install
+WORKDIR /app
+RUN mkdir output && \
+    mkdir log && \
+    python3 -c "import gdown;gdown.download_folder('https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC')" &&\
+    python3 -c "import gdown;gdown.download_folder('https://drive.google.com/drive/folders/159PKd3GYKsV2FCa9YjJ4YecYtWkjgaOE')" &&\
+    wget https://datasets.d2.mpi-inf.mpg.de/andriluka14cvpr/mpii_human_pose_v1.tar.gz &&\
+    tar -xzf mpii_human_pose_v1.tar.gz -C data/mpii &&\
+    rm mpii_human_pose_v1.tar.gz
+WORKDIR /app/data/coco
+RUN mkdir images &&\
+    wget http://images.cocodataset.org/zips/train2017.zip &&\
+    unzip train2017.zip -d images &&\
+    rm train2017.zip &&\
+    wget http://images.cocodataset.org/zips/val2017.zip &&\
+    unzip val2017.zip -d images &&\
+    rm val2017.zip &&\
+    mkdir annotations &&\
+    wget https://huggingface.co/datasets/merve/coco/resolve/main/annotations/person_keypoints_train2017.json -P annotations &&\
+    wget https://huggingface.co/datasets/merve/coco/resolve/main/annotations/person_keypoints_val2017.json -P annotations
+WORKDIR /app
+RUN python3 tools/train.py --cfg experiments/mpii/hrnet/w32_256x256_adam_lr1e-3.yaml
+
+CMD ["python", "demo/inference.py",\
+     "--cfg", "demo/inference-config.yaml",\
+     "--videoFile", "/data/input.mp4",\
+     "--writeBoxFrames",\
+     "--outputDir", "/data",\
+     "TEST.MODEL_FILE", "./models/pytorch/pose_coco/pose_hrnet_w32_256x192.pth"]
