@@ -23,3 +23,18 @@ services:
               count: all
               capabilities:
                 - gpu
+
+  tfpose:
+    build: ./tfpose
+    volumes:
+      - /srv/docker/skelettschaetzer/data:/data
+    container_name: tfpose
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
