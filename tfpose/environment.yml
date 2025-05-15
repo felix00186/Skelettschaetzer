@@ -1,0 +1,28 @@
+name: detectron
+channels:
+  - conda-forge
+  - defaults
+  - pytorch
+dependencies:
+  - python=3.7
+  - pip
+  - numpy
+  - cython
+  - pyyaml
+  - matplotlib
+  - opencv
+  - htop
+  - git
+  - gcc_linux-64
+  - gxx_linux-64
+  - cudatoolkit=11.1
+  - ninja
+  - pip:
+      - torch==1.8.1
+      - torchvision
+      - pycocotools>=2.0.2
+      - editdistance
+      - scikit-image
+      - yacs
+      - termcolor
+      - tqdm

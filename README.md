@@ -3,6 +3,7 @@
 Folgende technische Voraussetzungen müssen erfüllt sein:
 * Linux Ubuntu, Version >= 20.3
 * NVIDIA-Grafikkarte
+* CUDA 12.0
 * Docker, Version >= 20.10.22
 
 ## Installation
