@@ -1,16 +1,15 @@
-# TFPose
+# DensePose
 ## Quelle
-Das Programm wurde auf Grundlage dieses Repositories gebaut: https://github.com/aim-uofa/AdelaiDet.git
-
-Es bezieht sich auf das Paper `TFPose: Direct Human Pose Estimation with Transformers` (https://arxiv.org/pdf/2103.15320).
+DensePose ist als Erweiterung von Detectron 2 installiert (https://github.com/facebookresearch/detectron2.git).
 
 Zum Zitieren kann der folgende Bibtex-Code verwendet werden:
 
 ```bibtex
-@misc{tian2019adelaidet,
-  author =       {Tian, Zhi and Chen, Hao and Wang, Xinlong and Liu, Yuliang and Shen, Chunhua},
-  title =        {{AdelaiDet}: A Toolbox for Instance-level Recognition Tasks},
-  howpublished = {\url{https://git.io/adelaidet}},
+@misc{detectron2,
+  author =       {Yuxin Wu and Alexander Kirillov and Francisco Massa and
+                  Wan-Yen Lo and Ross Girshick},
+  title =        {Detectron2},
+  howpublished = {\url{https://github.com/facebookresearch/detectron2}},
   year =         {2019}
 }
 ```
