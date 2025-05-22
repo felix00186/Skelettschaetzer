@@ -24,8 +24,8 @@ services:
               capabilities:
                 - gpu
 
-  tfpose:
-    build: ./tfpose
+  densepose:
+    build: densepose
     volumes:
       - /srv/docker/skelettschaetzer/data:/data
     container_name: tfpose

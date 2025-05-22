@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
     ninja-build \
     libgl1 \
     python3-distutils \
-    pkg-config && \
+    pkg-config \
+    unzip && \
     rm -rf /var/lib/apt/lists/*
 
 # Miniconda installieren
@@ -39,8 +40,7 @@ ENV PATH=$CUDA_HOME/bin:$PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
 RUN git clone https://github.com/facebookresearch/detectron2 detectron2 && \
-    pip install -e detectron2 #&& \
-    #pip install av --no-binary :all:
+    pip install -e detectron2
 ENV FVCORE_CACHE="/tmp"
 ENV PYTHONPATH=/app
 RUN mkdir -p /app/vision/fair/detectron2/demo && \
@@ -48,17 +48,16 @@ RUN mkdir -p /app/vision/fair/detectron2/demo && \
     ln -s /app/detectron2/demo/demo.py /app/vision/fair/detectron2/demo/demo.py
 
 # DensePose einrichten
-ENV LD_LIBRARY_PATH=$CONDA_DIR/envs/detectron/lib:$LD_LIBRARY_PATH
 WORKDIR /app/detectron2/projects/DensePose
-RUN wget --quiet https://raw.githubusercontent.com/dajes/DensePose-TorchScript/refs/heads/main/configs/Base-DensePose-RCNN-FPN.yaml && \
-    wget --quiet https://huggingface.co/spaces/pngwn/IDM-VTON/resolve/4dbb2636fc5ab6149dbdaec6561706e1b8309402/configs/densepose_rcnn_R_50_FPN_s1x.yaml && \
-    wget --quiet https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_s1x_legacy/164832157/model_final_d366fa.pkl -O weights.pkl
-CMD ["python", "train_net.py", \
-     "--config-file", "densepose_rcnn_R_50_FPN_s1x.yaml", \
-     "MODEL.WEIGHTS", "weights.pkl", \
-     "OUTPUT_DIR", "."]
+RUN pip install -e .
+RUN wget https://raw.githubusercontent.com/facebookresearch/detectron2/refs/heads/main/projects/DensePose/configs/densepose_rcnn_R_50_FPN_DL_s1x.yaml &&\
+    wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/model_final_0ed407.pkl &&\
+    wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/metrics.json &&\
+    wget https://huggingface.co/spaces/pngwn/IDM-VTON/resolve/main/configs/Base-DensePose-RCNN-FPN.yaml &&\
+    mkdir cache &&\
+    mkdir cache2
+COPY exec.py .
+ENV LD_LIBRARY_PATH=$CONDA_DIR/envs/detectron/lib:$LD_LIBRARY_PATH
 
-#CMD ["python", "demo/demo.py", \
-#     "--config-file", "densepose_rcnn_R_50_FPN_s1x.yaml", \
-#     "--video-input", "/data/input.mp4", \
-#     "--output", "/data/densepose.mp4"]
+
+CMD ["python", "exec.py"]
