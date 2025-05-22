@@ -49,8 +49,8 @@ RUN mkdir -p /app/vision/fair/detectron2/demo && \
 
 # DensePose einrichten
 WORKDIR /app/detectron2/projects/DensePose
-RUN pip install -e .
-RUN wget https://raw.githubusercontent.com/facebookresearch/detectron2/refs/heads/main/projects/DensePose/configs/densepose_rcnn_R_50_FPN_DL_s1x.yaml &&\
+RUN pip install -e . &&\
+    wget https://raw.githubusercontent.com/facebookresearch/detectron2/refs/heads/main/projects/DensePose/configs/densepose_rcnn_R_50_FPN_DL_s1x.yaml &&\
     wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/model_final_0ed407.pkl &&\
     wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/metrics.json &&\
     wget https://huggingface.co/spaces/pngwn/IDM-VTON/resolve/main/configs/Base-DensePose-RCNN-FPN.yaml &&\
