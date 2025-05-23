@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 
 # Miniconda installieren
 ENV CONDA_DIR=/opt/conda
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
     bash ~/miniconda.sh -b -p $CONDA_DIR && \
     rm ~/miniconda.sh && \
     $CONDA_DIR/bin/conda clean -afy
@@ -39,13 +39,8 @@ ENV LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 ENV PATH=$CUDA_HOME/bin:$PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
-RUN git clone https://github.com/facebookresearch/detectron2 detectron2 && \
-    pip install -e detectron2
-ENV FVCORE_CACHE="/tmp"
+RUN git clone https://github.com/facebookresearch/detectron2 detectron2
 ENV PYTHONPATH=/app
-RUN mkdir -p /app/vision/fair/detectron2/demo && \
-    ln -s /app/detectron2/demo/predictor.py /app/vision/fair/detectron2/demo/predictor.py && \
-    ln -s /app/detectron2/demo/demo.py /app/vision/fair/detectron2/demo/demo.py
 
 # DensePose einrichten
 WORKDIR /app/detectron2/projects/DensePose

@@ -20,3 +20,11 @@ Zum Zitieren kann der folgende Bibtex-Code verwendet werden:
   year={2018}
 }
 ```
+
+## Dokumentation
+Nach der Installation diverser Pakete kann die Software DensePose ausgeführt werden,
+die ein Teil des Repositorys von Detectron2 ist.
+
+Da DensePose nur Bilder verarbeiten kann, wurde die `exec.py` geschrieben, in der
+das eingegebene Video zunächst in einzelne Bilder zerlegt wird, die nach der Verarbeitung
+durch DensePose in der richtigen Reihenfolge wieder zu einem Video zusammengesetzt werden.

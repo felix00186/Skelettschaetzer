@@ -5,6 +5,7 @@ import re
 
 # Zerlegen des Videos in einzelne Bilder
 cap = cv2.VideoCapture("/data/input.mp4")
+fps = cap.get(cv2.CAP_PROP_FPS)
 frame_count = 0
 while True:
     ret, frame = cap.read()
@@ -47,7 +48,7 @@ first_frame = cv2.imread(image_paths[0])
 height, width, _ = first_frame.shape
 size = (width, height)
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # MP4 Codec
-video_writer = cv2.VideoWriter("/data/densepose.mp4", fourcc, 30, size)
+video_writer = cv2.VideoWriter("/data/densepose.mp4", fourcc, fps, size)
 for idx, img_path in enumerate(image_paths):
     frame = cv2.imread(img_path)
     video_writer.write(frame)
