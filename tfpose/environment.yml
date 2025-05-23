@@ -1,0 +1,17 @@
+name: tf_pose
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+
+dependencies:
+  - python=3.6
+  - pip
+  - numpy
+  - opencv
+  - matplotlib
+  - tqdm
+  - cython
+  - pip:
+      - tensorflow-gpu==1.15
+      - scipy

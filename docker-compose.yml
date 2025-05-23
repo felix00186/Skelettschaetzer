@@ -2,11 +2,10 @@ version: '3.8'
 
 services:
   blazepose:
-    build:
-      context: ./blazepose
+    build: ./blazepose
     volumes:
       - /srv/docker/skelettschaetzer/data:/data
-    container_name: blazepose-container
+    container_name: blazepose
     restart: "no"
 
   lightweight:
@@ -26,6 +25,21 @@ services:
 
   densepose:
     build: densepose
+    volumes:
+      - /srv/docker/skelettschaetzer/data:/data
+    container_name: densepose
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+
+  tfpose:
+    build: tfpose
     volumes:
       - /srv/docker/skelettschaetzer/data:/data
     container_name: tfpose
