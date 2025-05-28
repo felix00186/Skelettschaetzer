@@ -37,7 +37,7 @@ services:
         condition: service_completed_successfully
 
   densepose:
-    build: densepose
+    build: ./densepose
     volumes:
       - /srv/docker/skelettschaetzer/data:/data
     container_name: densepose
@@ -55,10 +55,27 @@ services:
         condition: service_completed_successfully
 
   tfpose:
-    build: tfpose
+    build: ./tfpose
     volumes:
       - /srv/docker/skelettschaetzer/data:/data
     container_name: tfpose
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    depends_on:
+      input-loader:
+        condition: service_completed_successfully
+
+  higher-hrnet:
+    build: ./hrnet
+    volumes:
+      - /srv/docker/skelettschaetzer/data:/data
     restart: "no"
     deploy:
       resources:
