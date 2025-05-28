@@ -1,42 +1,26 @@
-FROM python:3.6-slim
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Berlin
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends git ffmpeg libsm6 libxext6 curl unzip tar wget make bzip2 &&\
-    rm -rf /var/lib/apt/lists/* &&\
-    pip install torch torchvision torchaudio gdown &&\
-    git clone https://github.com/leoxiaobin/deep-high-resolution-net.pytorch.git /app &&\
-    pip install -r /app/requirements.txt
-WORKDIR /app/lib
-RUN make &&\
-    git clone https://github.com/cocodataset/cocoapi.git /coco
-WORKDIR /coco/PythonAPI
-RUN make install
-WORKDIR /app
-RUN mkdir output && \
-    mkdir log && \
-    python3 -c "import gdown;gdown.download_folder('https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC')" &&\
-    python3 -c "import gdown;gdown.download_folder('https://drive.google.com/drive/folders/159PKd3GYKsV2FCa9YjJ4YecYtWkjgaOE')" &&\
-    wget https://datasets.d2.mpi-inf.mpg.de/andriluka14cvpr/mpii_human_pose_v1.tar.gz &&\
-    tar -xzf mpii_human_pose_v1.tar.gz -C data/mpii &&\
-    rm mpii_human_pose_v1.tar.gz
-WORKDIR /app/data/coco
-RUN mkdir images &&\
-    wget http://images.cocodataset.org/zips/train2017.zip &&\
-    unzip train2017.zip -d images &&\
-    rm train2017.zip &&\
-    wget http://images.cocodataset.org/zips/val2017.zip &&\
-    unzip val2017.zip -d images &&\
-    rm val2017.zip &&\
-    mkdir annotations &&\
-    wget https://huggingface.co/datasets/merve/coco/resolve/main/annotations/person_keypoints_train2017.json -P annotations &&\
-    wget https://huggingface.co/datasets/merve/coco/resolve/main/annotations/person_keypoints_val2017.json -P annotations
-WORKDIR /app
-RUN python3 tools/train.py --cfg experiments/mpii/hrnet/w32_256x256_adam_lr1e-3.yaml
+FROM pytorch/pytorch:1.8.1-cuda10.2-cudnn7-devel
 
-CMD ["python", "demo/inference.py",\
-     "--cfg", "demo/inference-config.yaml",\
-     "--videoFile", "/data/input.mp4",\
-     "--writeBoxFrames",\
-     "--outputDir", "/data",\
-     "TEST.MODEL_FILE", "./models/pytorch/pose_coco/pose_hrnet_w32_256x192.pth"]
+
+# MMCV installieren
+RUN rm /etc/apt/sources.list.d/cuda.list &&\
+    rm /etc/apt/sources.list.d/nvidia-ml.list &&\
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub &&\
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub &&\
+    apt-get update && apt-get install -y libgl1 libglib2.0-0 git wget &&\
+    apt-get clean &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    pip install -U openmim &&\
+    mim install 'mmcv-full<=1.6.0rc'
+
+# HigherHRNet installieren
+WORKDIR /app
+RUN git clone https://github.com/open-mmlab/mmpose.git
+WORKDIR /app/mmpose
+RUN git checkout v0.25.1 &&\
+    pip install -r requirements.txt &&\
+    sed -i "s/get_version(),/'0.25.1',/g" setup.py &&\
+    pip install -e . &&\
+    wget https://download.openmmlab.com/mmpose/bottom_up/higher_hrnet32_coco_512x512-8ae85183_20200713.pth &&\
+    wget https://raw.githubusercontent.com/open-mmlab/mmpose/refs/heads/master/configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py -O configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py
+
+CMD ["sh", "-c", "python demo/bottom_up_pose_tracking_demo.py configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py ./higher_hrnet32_coco_512x512-8ae85183_20200713.pth --video-path /data/input.mp4 --out-video-root /data && mv /data/vis_input.mp4 /data/hrnet.mp4"]
