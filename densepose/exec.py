@@ -35,7 +35,10 @@ result = list(filter(lambda s: s.startswith("Processing") or s .startswith("Outp
 images = {}
 for i in range(0, len(result), 2):
     proc_line = result[i]
-    save_line = result[i + 1]
+    try:
+        save_line = result[i + 1]
+    except IndexError:
+        continue
     input_img = re.search("^Processing (.*)$", proc_line).group(1)
     output_img = re.search("^Output saved to (.*)$", save_line).group(1)
     images[input_img] = output_img
