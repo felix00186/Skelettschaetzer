@@ -1,12 +1,22 @@
 version: '3.8'
 
 services:
+
+  input-loader:
+    build: ./input-loader
+    volumes:
+      - /srv/docker/skelettschaetzer/data:/data
+    restart: "no"
+
   blazepose:
     build: ./blazepose
     volumes:
       - /srv/docker/skelettschaetzer/data:/data
     container_name: blazepose
     restart: "no"
+    depends_on:
+      input-loader:
+        condition: service_completed_successfully
 
   lightweight:
     build: ./lightweight
@@ -22,6 +32,9 @@ services:
               count: all
               capabilities:
                 - gpu
+    depends_on:
+      input-loader:
+        condition: service_completed_successfully
 
   densepose:
     build: densepose
@@ -37,6 +50,9 @@ services:
               count: all
               capabilities:
                 - gpu
+    depends_on:
+      input-loader:
+        condition: service_completed_successfully
 
   tfpose:
     build: tfpose
@@ -52,3 +68,6 @@ services:
               count: all
               capabilities:
                 - gpu
+    depends_on:
+      input-loader:
+        condition: service_completed_successfully
