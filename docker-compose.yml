@@ -88,3 +88,20 @@ services:
     depends_on:
       input-loader:
         condition: service_completed_successfully
+
+  deeppose:
+    build: ./deeppose
+    volumes:
+      - /srv/docker/skelettschaetzer/data:/data
+    restart: "no"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+    depends_on:
+      input-loader:
+        condition: service_completed_successfully
