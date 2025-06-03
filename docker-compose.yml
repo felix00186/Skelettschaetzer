@@ -1,107 +1,68 @@
 version: '3.8'
 
+x-gpu: &gpu
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: all
+            capabilities: [gpu]
+
+x-depends: &depends-on-video-loader
+  depends_on:
+    input-loader:
+      condition: service_completed_successfully
+
+x-volume: &input-volume
+  volumes:
+    - ${INPUT_FOLDER}:/data
+
+
 services:
 
-  input-loader:
-    build: ./input-loader
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
-    restart: "no"
+  input-loader:             # == Youtube-Downloader ==
+    build: ./input-loader   # laedt ein YouTube-Video von einer gegebenen URL herunter,
+    restart: "no"           # falls kein mp4-Video gegeben ist.
+    <<: *input-volume       # Ausfuehrung vor den Skelettschaetzern.
 
   blazepose:
     build: ./blazepose
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
-    container_name: blazepose
     restart: "no"
-    depends_on:
-      input-loader:
-        condition: service_completed_successfully
+    <<: *depends-on-video-loader
+    <<: *input-volume
 
   lightweight:
     build: ./lightweight
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
-    container_name: lightweight
     restart: "no"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-    depends_on:
-      input-loader:
-        condition: service_completed_successfully
+    <<: *gpu
+    <<: *depends-on-video-loader
+    <<: *input-volume
 
   densepose:
     build: ./densepose
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
-    container_name: densepose
     restart: "no"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-    depends_on:
-      input-loader:
-        condition: service_completed_successfully
+    <<: *gpu
+    <<: *depends-on-video-loader
+    <<: *input-volume
 
   tfpose:
     build: ./tfpose
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
-    container_name: tfpose
     restart: "no"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-    depends_on:
-      input-loader:
-        condition: service_completed_successfully
+    <<: *gpu
+    <<: *depends-on-video-loader
+    <<: *input-volume
 
   higher-hrnet:
     build: ./hrnet
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
     restart: "no"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-    depends_on:
-      input-loader:
-        condition: service_completed_successfully
+    <<: *gpu
+    <<: *depends-on-video-loader
+    <<: *input-volume
 
   deeppose:
     build: ./deeppose
-    volumes:
-      - /srv/docker/skelettschaetzer/data:/data
     restart: "no"
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-    depends_on:
-      input-loader:
-        condition: service_completed_successfully
+    <<: *gpu
+    <<: *depends-on-video-loader
+    <<: *input-volume
