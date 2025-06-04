@@ -29,40 +29,29 @@ services:
   blazepose:
     build: ./blazepose
     restart: "no"
-    <<: *depends-on-video-loader
-    <<: *input-volume
+    <<: [*depends-on-video-loader, *input-volume]
 
   lightweight:
     build: ./lightweight
     restart: "no"
-    <<: *gpu
-    <<: *depends-on-video-loader
-    <<: *input-volume
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   densepose:
     build: ./densepose
     restart: "no"
-    <<: *gpu
-    <<: *depends-on-video-loader
-    <<: *input-volume
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   tfpose:
     build: ./tfpose
     restart: "no"
-    <<: *gpu
-    <<: *depends-on-video-loader
-    <<: *input-volume
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   higher-hrnet:
     build: ./hrnet
     restart: "no"
-    <<: *gpu
-    <<: *depends-on-video-loader
-    <<: *input-volume
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   deeppose:
     build: ./deeppose
     restart: "no"
-    <<: *gpu
-    <<: *depends-on-video-loader
-    <<: *input-volume
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
