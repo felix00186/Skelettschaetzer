@@ -7,16 +7,16 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     wget \
     git \
-    ca-certificates \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    build-essential \
-    ninja-build \
-    libgl1 \
-    python3-distutils \
-    pkg-config \
+    ca-certificates=20230311ubuntu0.18.04.1 \
+    libglib2.0-0=2.56.4-0ubuntu0.18.04.9 \
+    libsm6=2:1.2.2-1 \
+    libxext6=2:1.3.3-1 \
+    libxrender-dev=1:0.9.10-1 \
+    build-essential=12.4ubuntu1 \
+    ninja-build=1.8.2-1 \
+    libgl1=1.0.0-2ubuntu2.3 \
+    python3-distutils=3.6.9-1~18.04 \
+    pkg-config=0.29.1-0ubuntu2 \
     unzip && \
     rm -rf /var/lib/apt/lists/*
 
@@ -39,12 +39,12 @@ ENV LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 ENV PATH=$CUDA_HOME/bin:$PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
-RUN git clone https://github.com/facebookresearch/detectron2 detectron2
+RUN git clone https://github.com/facebookresearch/detectron2.git
 ENV PYTHONPATH=/app
 
 # DensePose einrichten
 WORKDIR /app/detectron2/projects/DensePose
-RUN pip install -e . &&\
+RUN pip install . &&\
     wget https://raw.githubusercontent.com/facebookresearch/detectron2/refs/heads/main/projects/DensePose/configs/densepose_rcnn_R_50_FPN_DL_s1x.yaml &&\
     wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/model_final_0ed407.pkl &&\
     wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/metrics.json &&\
