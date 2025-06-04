@@ -8,10 +8,10 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
     apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub &&\
     apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub &&\
     apt-get update && apt-get install -y \
-        libgl1 \
-        libglib2.0-0 \
-        libgtk2.0-dev \
-        pkg-config \
+        libgl1=1.0.0-2ubuntu2.3 \
+        libglib2.0-0=2.56.4-0ubuntu0.18.04.9 \
+        libgtk2.0-dev=2.24.32-1ubuntu1 \
+        pkg-config=0.29.1-0ubuntu2 \
         git \
         wget &&\
     apt-get clean &&\
