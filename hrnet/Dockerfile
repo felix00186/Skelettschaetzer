@@ -26,5 +26,6 @@ RUN git checkout v0.25.1 &&\
     pip install -e . &&\
     wget https://download.openmmlab.com/mmpose/bottom_up/higher_hrnet32_coco_512x512-8ae85183_20200713.pth &&\
     wget https://raw.githubusercontent.com/open-mmlab/mmpose/refs/heads/master/configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py -O configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py
+COPY exec.sh .
 
-CMD ["sh", "-c", "python demo/bottom_up_pose_tracking_demo.py configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py ./higher_hrnet32_coco_512x512-8ae85183_20200713.pth --video-path /data/input.mp4 --out-video-root /data && mv /data/vis_input.mp4 /data/hrnet.mp4"]
+CMD ["/bin/bash", "exec.sh"]

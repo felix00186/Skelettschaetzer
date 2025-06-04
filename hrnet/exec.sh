@@ -1,18 +1,16 @@
 #!/bin/bash
 
 INPUT_DIR="/data/input"
-OUTPUT_DIR="/data/deeppose"
+OUTPUT_DIR="/data/higher-hrnet"
 mkdir -p "$OUTPUT_DIR"
 
 # Durchlaufe alle .mp4-Dateien im Eingabeordner
 for VIDEO in "$INPUT_DIR"/*.mp4; do
     echo "Verarbeite $VIDEO..."
 
-    python demo/top_down_pose_tracking_demo_with_mmdet.py \
-        demo/mmdetection_cfg/faster_rcnn_r50_fpn_coco.py \
-        faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth \
-        configs/body/2d_kpt_sview_rgb_img/deeppose/coco/res50_coco_256x192.py \
-        ./deeppose_res50_coco_256x192-f6de6c0e_20210205.pth \
+    python demo/bottom_up_pose_tracking_demo.py \
+        configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py \
+        ./higher_hrnet32_coco_512x512-8ae85183_20200713.pth \
         --video-path "$VIDEO" \
         --out-video-root "$OUTPUT_DIR"
 
