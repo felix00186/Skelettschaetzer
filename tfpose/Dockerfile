@@ -54,6 +54,6 @@ COPY graph_opt.pb /app/tfpose/models/graph/cmu/graph_opt.pb
 
 
 CMD ["python3", "run_video.py",\
-     "--video", "/data/input.mp4",\
+     "--video", "/data/input",\
      "--show-process", "SHOW_PROCESS",\
-     "--output", "/data/tfpose.mp4"]
+     "--output", "/data/tfpose"]

@@ -3,8 +3,10 @@ import logging
 import time
 import cv2
 import numpy as np
+import os
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
+
 
 logger = logging.getLogger('TfPoseEstimator-Video')
 logger.setLevel(logging.INFO)
@@ -30,36 +32,41 @@ if __name__ == '__main__':
     else:
         e = TfPoseEstimator(get_graph_path(args.model), target_size=(w, h))
 
-    cap = cv2.VideoCapture(args.video)
-    if not cap.isOpened():
-        logger.error(f"Cannot open video file: {args.video}")
-        exit(1)
+    # durch Videos iterieren
+    os.makedirs(args.output, exist_ok=True)
+    files = os.listdir(args.video)
+    mp4_files = list(filter(lambda x: x.endswith('.mp4'), files))
+    for file_name in mp4_files:
+        cap = cv2.VideoCapture(os.path.join(args.video, file_name))
+        if not cap.isOpened():
+            logger.error(f"Cannot open video file: {args.video}")
+            exit(1)
 
-    # Video writer setup
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v' for .mp4
-    out = cv2.VideoWriter(args.output, fourcc, fps, (frame_width, frame_height))
+        # Video writer setup
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # 'mp4v' for .mp4
+        out = cv2.VideoWriter(os.path.join(args.output, file_name), fourcc, fps, (frame_width, frame_height))
 
-    logger.info(f"Processing video: {args.video}")
-    logger.info(f"Saving output to: {args.output}")
+        logger.info(f"Processing video: {args.video}")
+        logger.info(f"Saving output to: {args.output}")
 
-    frame_count = 0
-    start_time = time.time()
-    while cap.isOpened():
-        ret, image = cap.read()
-        if not ret:
-            break
+        frame_count = 0
+        start_time = time.time()
+        while cap.isOpened():
+            ret, image = cap.read()
+            if not ret:
+                break
 
-        humans = e.inference(image, upsample_size=4.0)
-        if not args.showBG:
-            image = np.zeros(image.shape)
-        image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
+            humans = e.inference(image, upsample_size=4.0)
+            if not args.showBG:
+                image = np.zeros(image.shape)
+            image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
 
-        out.write(image)
-        frame_count += 1
+            out.write(image)
+            frame_count += 1
 
-    cap.release()
-    out.release()
-    logger.info(f"Finished processing {frame_count} frames in {time.time() - start_time:.2f} seconds.")
+        cap.release()
+        out.release()
+        logger.info(f"Finished processing {frame_count} frames in {time.time() - start_time:.2f} seconds.")
