@@ -21,5 +21,5 @@ COPY exec.py .
 
 CMD ["python", "exec.py", \
      "--checkpoint-path", "/app/pose_estimation/models/checkpoint_iter_370000.pth", \
-     "--video", "/data/input.mp4", \
-     "--output-video", "/data/lightweight.mp4"]
+     "--video", "/data/input", \
+     "--output-video", "/data/lightweight"]

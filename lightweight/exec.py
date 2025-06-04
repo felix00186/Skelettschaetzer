@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import os
 
 import cv2
 import numpy as np
@@ -141,13 +142,13 @@ if __name__ == "__main__":
     parser.add_argument("--output-video", type=str, default="", help="path to save output video")
     args = parser.parse_args()
 
-    if args.video == "":
-        raise ValueError("--video has to be provided")
-
     net = PoseEstimationWithMobileNet()
     checkpoint = torch.load(args.checkpoint_path, map_location="cpu")
     load_state(net, checkpoint)
 
-    frame_provider = VideoReader(args.video)
-
-    run_demo(net, frame_provider, args.height_size, args.cpu, args.track, args.smooth, args.output_video)
+    files = os.listdir(args.video)
+    mp4_files = list(filter(lambda s: s.endswith(".mp4"), files))
+    os.makedirs(args.output_video, exist_ok=True)
+    for file_name in mp4_files:
+        frame_provider = VideoReader(os.path.join(args.video, file_name))
+        run_demo(net, frame_provider, args.height_size, args.cpu, args.track, args.smooth, os.path.join(args.output_video, file_name))
