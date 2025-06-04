@@ -1,4 +1,6 @@
+exit()
 import os
+
 
 # Schließen, falls input.mp4 existiert
 if os.path.exists("/data/input.mp4"):
