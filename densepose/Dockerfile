@@ -39,16 +39,15 @@ ENV LD_LIBRARY_PATH=$CUDA_HOME/lib64:$LD_LIBRARY_PATH
 ENV PATH=$CUDA_HOME/bin:$PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
-RUN git clone https://github.com/facebookresearch/detectron2.git
 ENV PYTHONPATH=/app
 
 # DensePose einrichten
-WORKDIR /app/detectron2/projects/DensePose
-RUN pip install . &&\
+RUN pip install "detectron2-densepose @ git+https://github.com/facebookresearch/detectron2.git@536dc9d527074e3b15df5f6677ffe1f4e104a4ab#egg=detectron2&subdirectory=projects/DensePose" &&\
     wget https://raw.githubusercontent.com/facebookresearch/detectron2/refs/heads/main/projects/DensePose/configs/densepose_rcnn_R_50_FPN_DL_s1x.yaml &&\
     wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/model_final_0ed407.pkl &&\
     wget https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_50_FPN_DL_s1x/165712097/metrics.json &&\
     wget https://huggingface.co/spaces/pngwn/IDM-VTON/resolve/main/configs/Base-DensePose-RCNN-FPN.yaml &&\
+    wget https://raw.githubusercontent.com/facebookresearch/detectron2/80307d2d5e06f06a8a677cc2653f23a4c56402ac/projects/DensePose/apply_net.py &&\
     mkdir cache &&\
     mkdir cache2
 COPY exec.py .
