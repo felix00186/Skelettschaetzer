@@ -29,8 +29,8 @@ In diesen können Sie dann Folgendes ablegen:
 4. Sie finden die generierten Videos mit Skelettschätzungen im von Ihnen gewählten Data-Ordner.
 
 Falls eine `input.txt` vorhanden ist, werden vor der Ausführung die YouTube-Videos davon heruntergeladen und zu den ggf. vorhandenen mp4-Dateien ergänzt.
-Sollten keine Videos vorhandn sein, beendet sich die Anwendung mit einem Fehler.
+Sollten keine Videos vorhanden sein, beendet sich die Anwendung mit einem Fehler.
 
-# Bildrechte
+## Bildrechte
 Die GIF-Bilder in den Unterordnern zeigen Lucas W. Kunze. Aufgenommen wurde das Video von Felix Semt.
 Weiterverwendung nur zu wissenschaftlichen Zwecken erlaubt.
