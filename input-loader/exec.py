@@ -16,8 +16,11 @@ if os.path.exists(os.path.join(INPUT_DIR, "input.txt")):
             "noplaylist": True,
             "quiet": False
         }
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([url])
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+        except:
+            print(f"URL: {url}, gescheitert!")
 
 
 files = os.listdir(INPUT_DIR)
