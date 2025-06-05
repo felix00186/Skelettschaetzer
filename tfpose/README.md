@@ -1,6 +1,8 @@
 # TfPose
 Dies ist ein Skelettschätzer, der auf TensorFlow (Tf) und OpenPose aufbaut.
 
+<img src="./demo.gif" height="300px" />
+
 ## Installation
 Sie müssen zunächst die Datei unter dem Link https://www.mediafire.com/file/qlzzr20mpocnpa3/graph_opt.pb herunterladen
 und in diesem Verzeichnis ablegen.

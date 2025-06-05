@@ -1,5 +1,7 @@
 # Higher HRNet
 
+<img src="./demo.gif" height="300px" />
+
 ## Quellen
 Der Skelettschätzer Higher HRNet wird auf dem Software-Paket `mmpose` aufgebaut.
 Dieses ist in der Lage, verschiedene Skelettschätzer auszuführen.

@@ -3,6 +3,8 @@
 Blazepose lässt sich sehr einfach installieren und funktioniert ohne große Hardware-Anforderungen.
 Die Software kann von pypi.org mittels `pip install mediapipe` heruntergeladen werden.
 
+<img src="./demo.gif" height="300px" />
+
 ## Quelle
 Blazepose wurde von Google entwickelt. Informationen zur Forschung finden sich hier: https://research.google/blog/on-device-real-time-body-pose-tracking-with-mediapipe-blazepose/
 

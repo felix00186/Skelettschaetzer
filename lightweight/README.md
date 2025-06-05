@@ -1,5 +1,7 @@
 # Lightweight
 
+<img src="./demo.gif" height="300px" />
+
 Lightweight basiert auf einer stark optimierten Version von OpenPose und erkennt in Echtzeit die Körperhaltungen mehrerer Personen auf Bildern.
 Dabei werden bis zu 18 Schlüsselpunkte pro Person (wie Augen, Schultern oder Knie) detektiert. Im Vergleich zu OpenPose bietet dieses Modell eine deutlich höhere Effizienz bei minimalem Genauigkeitsverlust.
 

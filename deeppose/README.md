@@ -1,6 +1,8 @@
 # DeepPose
 DeepPose ist ein auf Deep Learning basierender Skelettschätzer, der menschliche Posen aus Bildern oder Videos präzise erkennt und rekonstruiert. Das System nutzt ein neuronales Netzwerk, um die Positionen von Körpergelenken direkt zu schätzen, ohne auf klassische Merkmalsextraktion angewiesen zu sein.
 
+<img src="./demo.gif" height="300px" />
+
 ## Hinweis
 ⚠️ Im ausgegebenen Video ist sowohl Objekt-/Personenerkennung als auch Skelettschätzung implementiert.
 Deeppose hat dabei nur die Skelettschätzung vorgenommen. Im gegebenen Softwarepaket

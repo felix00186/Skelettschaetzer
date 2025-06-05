@@ -1,4 +1,7 @@
 # DensePose
+
+<img src="./demo.gif" height="300px" />
+
 ## Quelle
 DensePose ist als Erweiterung von Detectron 2 installiert (https://github.com/facebookresearch/detectron2.git).
 
