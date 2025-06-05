@@ -26,6 +26,9 @@ RUN git checkout v0.25.1 &&\
     pip install -e . &&\
     wget https://download.openmmlab.com/mmpose/bottom_up/higher_hrnet32_coco_512x512-8ae85183_20200713.pth &&\
     wget https://raw.githubusercontent.com/open-mmlab/mmpose/refs/heads/master/configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py -O configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py
-COPY exec.sh .
+COPY exec.py .
+ENV POSE_CONFIG=configs/body/2d_kpt_sview_rgb_img/associative_embedding/coco/higherhrnet_w32_coco_512x512.py
+ENV POSE_CHECKPOINT=./higher_hrnet32_coco_512x512-8ae85183_20200713.pth
 
-CMD ["/bin/bash", "exec.sh"]
+
+CMD ["python", "exec.py"]
