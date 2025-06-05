@@ -4,6 +4,7 @@ import time
 import cv2
 import numpy as np
 import os
+import json
 from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 
@@ -25,7 +26,6 @@ if __name__ == '__main__':
     parser.add_argument('--show-process', type=bool, default=False, help='debug: slow inference')
     parser.add_argument('--showBG', type=bool, default=True, help='Show background')
     args = parser.parse_args()
-
     w, h = model_wh(args.resolution)
     if w == 0 or h == 0:
         e = TfPoseEstimator(get_graph_path(args.model), target_size=(432, 368))
@@ -38,6 +38,8 @@ if __name__ == '__main__':
     mp4_files = list(filter(lambda x: x.endswith('.mp4'), files))
     for file_name in mp4_files:
         cap = cv2.VideoCapture(os.path.join(args.video, file_name))
+        data = []
+
         if not cap.isOpened():
             logger.error(f"Cannot open video file: {args.video}")
             exit(1)
@@ -59,14 +61,31 @@ if __name__ == '__main__':
             if not ret:
                 break
 
+            frame_data = []
             humans = e.inference(image, upsample_size=4.0)
+
+            # Ausgabe der strukturierten Daten als JSON
+            for human in humans:
+                human_data = {str(body_part.get_part_name()).split(".")[-1]: {
+                    "x": body_part.x,
+                    "y": body_part.y,
+                    "score": body_part.score
+                } for body_part_id, body_part in human.body_parts.items()}
+                frame_data.append(human_data)
+            data.append(frame_data)
+
+            # Ausgabe des Bildes
             if not args.showBG:
                 image = np.zeros(image.shape)
             image = TfPoseEstimator.draw_humans(image, humans, imgcopy=False)
-
             out.write(image)
+
             frame_count += 1
 
         cap.release()
         out.release()
+
+        with open(f"{args.output}/{file_name}.json", "w") as f:
+            json.dump(data, f)
+
         logger.info(f"Finished processing {frame_count} frames in {time.time() - start_time:.2f} seconds.")
