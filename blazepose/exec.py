@@ -1,6 +1,7 @@
 import cv2
 import mediapipe as mp
 import os
+import json
 
 
 mp_pose = mp.solutions.pose
@@ -9,6 +10,9 @@ mp_drawing = mp.solutions.drawing_utils
 INPUT_DIR = "/data/input"
 OUTPUT_DIR = "/data/blazepose"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+with open("./joint_names.json", "r") as f:
+    joint_names = json.load(f)
 
 # Iteriere durch Videos
 files = os.listdir(INPUT_DIR)
@@ -21,9 +25,8 @@ for video_path in mp4_files:
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
-
-    # Optional: Ausgabevideo speichern
     out = cv2.VideoWriter(os.path.join(OUTPUT_DIR, video_path), cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+    data = []
 
     while cap.isOpened():
         success, frame = cap.read()
@@ -39,8 +42,8 @@ for video_path in mp4_files:
         # Zurück zu BGR für OpenCV
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        # Zeichne das Skelett, falls erkannt
         if results.pose_landmarks:
+            # Skelett zeichnen
             mp_drawing.draw_landmarks(
                 image,
                 results.pose_landmarks,
@@ -49,6 +52,18 @@ for video_path in mp4_files:
                 mp_drawing.DrawingSpec(color=(0, 0, 255), thickness=2, circle_radius=2)
             )
 
+            # strukturierte Daten ausgeben
+            data.append([{
+                joint_names[i]:
+                {
+                    "x": lm.x * width,
+                    "y": lm.y * height,
+                    "z": lm.z,
+                    "score": lm.visibility,
+                }
+                for i, lm in enumerate(results.pose_landmarks.landmark)
+            }])
+
         # Schreibe Frame ins Ausgabefile
         out.write(image)
 
@@ -56,3 +71,6 @@ for video_path in mp4_files:
     cap.release()
     out.release()
     print(f"Video verarbeitet: {video_path}")
+
+    with open(os.path.join(OUTPUT_DIR, video_path.replace(".mp4", ".json")), "w") as f:
+        json.dump(data, f)

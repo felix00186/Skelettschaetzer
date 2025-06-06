@@ -12,7 +12,8 @@ RUN apt-get update &&\
     pip install -r requirements.txt
 
 # Kopiere das Python-Skript
-COPY blazepose.py .
+COPY exec.py .
+COPY joint_names.json .
 
 # Starte das Skript beim Containerstart
-CMD ["python", "blazepose.py"]
+CMD ["python", "exec.py"]
