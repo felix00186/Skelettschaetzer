@@ -49,11 +49,12 @@ RUN git clone https://github.com/jiajunhua/ildoonet-tf-pose-estimation.git tfpos
 
 # Modell laden
 WORKDIR /app/tfpose
-COPY run_video.py .
+COPY exec.py .
 COPY graph_opt.pb /app/tfpose/models/graph/cmu/graph_opt.pb
+COPY joint_names.json .
 
 
-CMD ["python3", "run_video.py",\
+CMD ["python3", "exec.py",\
      "--video", "/data/input",\
      "--show-process", "SHOW_PROCESS",\
      "--output", "/data/tfpose"]

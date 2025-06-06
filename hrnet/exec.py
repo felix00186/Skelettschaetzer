@@ -7,26 +7,8 @@ from mmpose.core import Smoother
 from mmpose.datasets import DatasetInfo
 
 
-JOINT_NAMES = [
-    "NOSE",
-    "EYE_LEFT",
-    "EYE_RIGHT",
-    "EAR_LEFT",
-    "EAR_RIGHT",
-    "SHOULDER_LEFT",
-    "SHOULDER_RIGHT",
-    "ELBOW_LEFT",
-    "ELBOW_RIGHT",
-    "WRIST_LEFT",
-    "WRIST_RIGHT",
-    "HIP_LEFT",
-    "HIP_RIGHT",
-    "KNEE_LEFT",
-    "KNEE_RIGHT",
-    "ANKLE_LEFT",
-    "ANKLE_RIGHT"
-]
-
+with open("./joint_names.json", "r") as f:
+    joint_names = json.load(f)
 
 # Input-Daten
 pose_config = os.environ["POSE_CONFIG"]
@@ -89,7 +71,7 @@ for file_name in input_files:
         humans = [*pose_results]
         humans.sort(key=lambda human: human["track_id"])
         for human in humans:
-            frame_data.append({JOINT_NAMES[i]:
+            frame_data.append({joint_names[i]:
                {
                    "x": float(info[0]),
                    "y": float(info[1])
@@ -113,5 +95,5 @@ for file_name in input_files:
     cap.release()
     videoWriter.release()
 
-    with open(os.path.join(output_dir, file_name+".json"), "w") as f:
+    with open(os.path.join(output_dir, file_name.replace(".mp4", ".json")), "w") as f:
         json.dump(data, f)

@@ -32,6 +32,7 @@ RUN git checkout v0.20.0 &&\
 RUN wget https://download.openmmlab.com/mmpose/top_down/deeppose/deeppose_res50_coco_256x192-f6de6c0e_20210205.pth &&\
     wget https://download.openmmlab.com/mmdetection/v2.0/faster_rcnn/faster_rcnn_r50_fpn_1x_coco/faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
 COPY exec.py .
+COPY joint_names.json .
 ENV DET_CONFIG=demo/mmdetection_cfg/faster_rcnn_r50_fpn_coco.py
 ENV DET_CHECKPOINT=faster_rcnn_r50_fpn_1x_coco_20200130-047c8118.pth
 ENV POSE_CONFIG=configs/body/2d_kpt_sview_rgb_img/deeppose/coco/res50_coco_256x192.py

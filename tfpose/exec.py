@@ -9,27 +9,8 @@ from tf_pose.estimator import TfPoseEstimator
 from tf_pose.networks import get_graph_path, model_wh
 
 
-JOINT_NAMES_TRANSLATE = {
-    "CocoPart.LAnkle": "ANKLE_LEFT",
-    "CocoPart.RWrist": "WRIST_RIGHT",
-    "CocoPart.RElbow": "ELBOW_RIGHT",
-    "CocoPart.LElbow": "ELBOW_LEFT",
-    "CocoPart.Nose": "NOSE",
-    "CocoPart.RShoulder": "SHOULDER_RIGHT",
-    "CocoPart.REye": "EYE_RIGHT",
-    "CocoPart.LEye": "EYE_LEFT",
-    "CocoPart.RKnee": "KNEE_RIGHT",
-    "CocoPart.RAnkle": "ANKLE_RIGHT",
-    "CocoPart.LEar": "EAR_LEFT",
-    "CocoPart.Neck": "NECK",
-    "CocoPart.LHip": "HIP_LEFT",
-    "CocoPart.RHip": "HIP_RIGHT",
-    "CocoPart.LShoulder": "SHOULDER_LEFT",
-    "CocoPart.REar": "EAR_RIGHT",
-    "CocoPart.LKnee": "KNEE_RIGHT",
-    "CocoPart.LWrist": "WRIST_LEFT"
-}
-
+with open("./joint_names.json", "r") as f:
+    joint_names = json.load(f)
 
 logger = logging.getLogger("TfPoseEstimator-Video")
 logger.setLevel(logging.INFO)
@@ -88,9 +69,9 @@ if __name__ == "__main__":
 
             # Ausgabe der strukturierten Daten als JSON
             for human in humans:
-                human_data = {JOINT_NAMES_TRANSLATE[str(body_part.get_part_name())]: {
-                    "x": body_part.x,
-                    "y": body_part.y,
+                human_data = {joint_names[str(body_part.get_part_name())]: {
+                    "x": body_part.x * frame_width,
+                    "y": body_part.y * frame_height,
                     "score": body_part.score
                 } for body_part_id, body_part in human.body_parts.items()}
                 frame_data.append(human_data)
@@ -107,7 +88,7 @@ if __name__ == "__main__":
         cap.release()
         out.release()
 
-        with open(f"{args.output}/{file_name}.json", "w") as f:
+        with open(os.path.join(args.output, file_name.replace(".mp4", ".json")), "w") as f:
             json.dump(data, f)
 
         logger.info(f"Finished processing {frame_count} frames in {time.time() - start_time:.2f} seconds.")

@@ -1,0 +1,20 @@
+{
+  "nose": "NOSE",
+  "neck": "NECK",
+  "r_sho": "SHOULDER_RIGHT",
+  "r_elb": "ELBOW_RIGHT",
+  "r_wri": "WRIST_RIGHT",
+  "l_sho": "SHOULDER_LEFT",
+  "l_elb": "ELBOW_LEFT",
+  "l_wri": "WRIST_LEFT",
+  "r_hip": "HIP_RIGHT",
+  "r_knee": "KNEE_RIGHT",
+  "r_ank": "ANKLE_RIGHT",
+  "l_hip": "HIP_LEFT",
+  "l_knee": "KNEE_LEFT",
+  "l_ank": "ANKLE_LEFT",
+  "r_eye": "EYE_RIGHT",
+  "l_eye": "EYE_LEFT",
+  "r_ear": "EAR_RIGHT",
+  "l_ear": "EAR_LEFT"
+}

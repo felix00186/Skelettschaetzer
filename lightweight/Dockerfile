@@ -18,6 +18,7 @@ WORKDIR /app/pose_estimation
 RUN wget https://download.01.org/opencv/openvino_training_extensions/models/human_pose_estimation/checkpoint_iter_370000.pth -O models/checkpoint_iter_370000.pth
 WORKDIR /app
 COPY exec.py .
+COPY joint_names.json .
 
 CMD ["python", "exec.py", \
      "--checkpoint-path", "/app/pose_estimation/models/checkpoint_iter_370000.pth", \

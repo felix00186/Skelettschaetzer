@@ -1,0 +1,20 @@
+{
+  "CocoPart.LAnkle": "ANKLE_LEFT",
+  "CocoPart.RWrist": "WRIST_RIGHT",
+  "CocoPart.RElbow": "ELBOW_RIGHT",
+  "CocoPart.LElbow": "ELBOW_LEFT",
+  "CocoPart.Nose": "NOSE",
+  "CocoPart.RShoulder": "SHOULDER_RIGHT",
+  "CocoPart.REye": "EYE_RIGHT",
+  "CocoPart.LEye": "EYE_LEFT",
+  "CocoPart.RKnee": "KNEE_RIGHT",
+  "CocoPart.RAnkle": "ANKLE_RIGHT",
+  "CocoPart.LEar": "EAR_LEFT",
+  "CocoPart.Neck": "NECK",
+  "CocoPart.LHip": "HIP_LEFT",
+  "CocoPart.RHip": "HIP_RIGHT",
+  "CocoPart.LShoulder": "SHOULDER_LEFT",
+  "CocoPart.REar": "EAR_RIGHT",
+  "CocoPart.LKnee": "KNEE_RIGHT",
+  "CocoPart.LWrist": "WRIST_LEFT"
+}

@@ -17,26 +17,8 @@ from modules.pose import Pose, track_poses
 from val import normalize, pad_width
 
 
-JOINT_NAME_TRANSLATE = {
-    "nose": "NOSE",
-    "neck": "NECK",
-    "r_sho": "SHOULDER_RIGHT",
-    "r_elb": "ELBOW_RIGHT",
-    "r_wri": "WRIST_RIGHT",
-    "l_sho": "SHOULDER_LEFT",
-    "l_elb": "ELBOW_LEFT",
-    "l_wri": "WRIST_LEFT",
-    "r_hip": "HIP_RIGHT",
-    "r_knee": "KNEE_RIGHT",
-    "r_ank": "ANKLE_RIGHT",
-    "l_hip": "HIP_LEFT",
-    "l_knee": "KNEE_LEFT",
-    "l_ank": "ANKLE_LEFT",
-    "r_eye": "EYE_RIGHT",
-    "l_eye": "EYE_LEFT",
-    "r_ear": "EAR_RIGHT",
-    "l_ear": "EAR_LEFT"
-}
+with open("./joint_names.json", "r") as f:
+    joint_names = json.load(f)
 
 
 class VideoReader(object):
@@ -134,7 +116,7 @@ def run_demo(net, image_provider, height_size, cpu, track, smooth, output_path=N
                 joint_data["y"] = int(pose.keypoints[i][1])
                 joint_data["sigma"] = float(pose.sigmas[i])
                 joint_data["var"] = float(pose.vars[i])
-                pose_data[JOINT_NAME_TRANSLATE[joint_name]] = joint_data
+                pose_data[joint_names[joint_name]] = joint_data
             frame_data.append(pose_data)
         data.append(frame_data)
 
@@ -192,5 +174,5 @@ if __name__ == "__main__":
     for file_name in mp4_files:
         frame_provider = VideoReader(os.path.join(args.video, file_name))
         data = run_demo(net, frame_provider, args.height_size, args.cpu, args.track, args.smooth, os.path.join(args.output_video, file_name))
-        with open(os.path.join(args.output_video, file_name+".json"), "w") as f:
+        with open(os.path.join(args.output_video, file_name.replace(".mp4", ".json")), "w") as f:
             json.dump(data, f)
