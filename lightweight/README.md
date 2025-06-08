@@ -25,14 +25,4 @@ Zitiert werden kann folgendermaßen:
 Lightweight benötigt grundsätzlich keine GPU, sondern kann rein auf einer CPU arbeiten. Das ist allerdings deutlich ineffizienter.
 Wenn Sie diese Lösung bevorzugen, tun Sie die folgenden beiden Dinge:
 1. Öffnen Sie das Dockerfile. Ergänzen Sie in der letzten Zeile in der Liste nach `CMD` das Element `--cpu`.
-2. Entfernen Sie in der `docker-compose.yml` im Stammverzeichnis beim Service `lightweight` den gesamten folgenden Abschnitt:
-```yaml
-deploy:
-  resources:
-    reservations:
-      devices:
-        - driver: nvidia
-          count: all
-          capabilities:
-            - gpu
-```
+2. Entfernen Sie in der `docker-compose.yml` im Stammverzeichnis beim Service `lightweight` den Eintrag `*gpu` aus der Liste.
