@@ -46,6 +46,12 @@ services:
       higher-hrnet:
         condition: service_completed_successfully
 
+  data-transformer:
+    build: ./data_transformer
+    restart: "no"
+    depends_on:
+      - codecs
+    <<: *input-volume
 
   # Skelettschaetzer
   blazepose:
