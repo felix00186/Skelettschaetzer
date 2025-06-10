@@ -7,6 +7,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY exec.sh .
-RUN chmod +x convert_and_overwrite_mp4.sh
+RUN chmod +x exec.sh
 
 CMD ["./exec.sh"]
