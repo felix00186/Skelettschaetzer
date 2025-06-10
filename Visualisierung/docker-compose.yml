@@ -4,10 +4,11 @@ version: "3.9"
 services:
   notebook:
     build: ./jupyter
+    user: root
     ports:
       - "8888:8888"
     volumes:
-      - /srv/docker/skelettschaetzer/data:/home/jovyan/data
+      - ${INPUT_FOLDER}:/home/jovyan/data
     depends_on:
       - videoserver
     networks:
@@ -16,15 +17,12 @@ services:
       - JUPYTER_ENABLE_LAB=yes
 
   videoserver:
-    image: python:3.11-slim
+    build: ./videoserver
+    ports:
+      - "8000:80"
     volumes:
-      - /srv/docker/skelettschaetzer/data:/data
-    working_dir: /data
-    command: python3 -m http.server 8000
-    expose:
-      - "8000"
-    networks:
-      - backend
+      - ${INPUT_FOLDER}:/usr/local/apache2/htdocs/
+
 
 networks:
   backend:

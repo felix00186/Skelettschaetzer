@@ -5,10 +5,9 @@ RUN apt update &&\
     apt install -y r-base &&\
     pip install ipywidgets tomli rpy2 &&\
     jupyter labextension install @jupyter-widgets/jupyterlab-manager
-USER jovyan
 WORKDIR /home/jovyan
-COPY notebooks/* .
+COPY notebooks/* ./work
+COPY entrypoint.sh .
+RUN chmod -R 777 /home/jovyan/work
 
-CMD ["start-notebook.sh",\
-     "--NotebookApp.token=''",\
-     "--NotebookNotary.checkpoint_dir=/tmp/checkpoints_disabled"]
+CMD ["bash", "entrypoint.sh"]
