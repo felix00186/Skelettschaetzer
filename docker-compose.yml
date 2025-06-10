@@ -49,31 +49,31 @@ services:
 
   # Skelettschaetzer
   blazepose:
-    build: ./blazepose
+    build: ./pose/blazepose
     restart: "no"
     <<: [*depends-on-video-loader, *input-volume]
 
   lightweight:
-    build: ./lightweight
+    build: ./pose/lightweight
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   densepose:
-    build: ./densepose
+    build: ./pose/densepose
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   tfpose:
-    build: ./tfpose
+    build: ./pose/tfpose
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   higher-hrnet:
-    build: ./hrnet
+    build: ./pose/hrnet
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   deeppose:
-    build: ./deeppose
+    build: ./pose/deeppose
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
