@@ -21,11 +21,33 @@ x-volume: &input-volume
 
 services:
 
+  # Vorbereitung
   input-loader:             # == Youtube-Downloader ==
     build: ./input-loader   # laedt ein YouTube-Video von einer gegebenen URL herunter,
     restart: "no"           # falls kein mp4-Video gegeben ist.
     <<: *input-volume       # Ausfuehrung vor den Skelettschaetzern.
 
+  # Nachbereitung
+  codecs:
+    build: ./codecs
+    restart: "no"
+    <<: *input-volume
+    depends_on:
+      blazepose:
+        condition: service_completed_successfully
+      lightweight:
+        condition: service_completed_successfully
+      deeppose:
+        condition: service_completed_successfully
+      densepose:
+        condition: service_completed_successfully
+      tfpose:
+        condition: service_completed_successfully
+      higher-hrnet:
+        condition: service_completed_successfully
+
+
+  # Skelettschaetzer
   blazepose:
     build: ./blazepose
     restart: "no"
