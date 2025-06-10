@@ -41,10 +41,12 @@ for file_name in input_files:
     next_id = 0
     pose_results = []
     data = []
-    while cap.isOpened():
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    for frame_number in range(total_frames):
         flag, img = cap.read()
         if not flag:
-            break
+            data.append([])
+            continue
         pose_results_last = pose_results
 
         pose_results, returned_outputs = inference_bottom_up_pose_model(

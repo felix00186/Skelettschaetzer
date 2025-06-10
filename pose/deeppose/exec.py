@@ -43,11 +43,14 @@ for file_name in input_files:
     next_id = 0
     pose_results = []
     data = []
-    while (cap.isOpened()):
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    for frame_number in range(total_frames):
+        success, frame = cap.read()
         pose_results_last = pose_results
         flag, img = cap.read()
         if not flag:
-            break
+            data.append([])
+            continue
         mmdet_results = inference_detector(det_model, img)
         person_results = process_mmdet_results(mmdet_results, 1)
 

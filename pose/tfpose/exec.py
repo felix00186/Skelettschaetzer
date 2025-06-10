@@ -59,10 +59,12 @@ if __name__ == "__main__":
 
         frame_count = 0
         start_time = time.time()
-        while cap.isOpened():
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        for frame_number in range(total_frames):
             ret, image = cap.read()
             if not ret:
-                break
+                data.append([])
+                continue
 
             frame_data = []
             humans = e.inference(image, upsample_size=4.0)

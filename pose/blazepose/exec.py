@@ -28,10 +28,12 @@ for video_path in mp4_files:
     out = cv2.VideoWriter(os.path.join(OUTPUT_DIR, video_path), cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
     data = []
 
-    while cap.isOpened():
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    for frame_number in range(total_frames):
         success, frame = cap.read()
         if not success:
-            break
+            data.append([])
+            continue
 
         # Konvertiere das Bild zu RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -63,6 +65,9 @@ for video_path in mp4_files:
                 }
                 for i, lm in enumerate(results.pose_landmarks.landmark)
             }])
+
+        else:
+            data.append([])
 
         # Schreibe Frame ins Ausgabefile
         out.write(image)

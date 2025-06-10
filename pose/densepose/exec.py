@@ -20,14 +20,13 @@ for file_name in mp4_files:
     # Video laden und in Einzelbilder unterteilen
     cap = cv2.VideoCapture(os.path.join(INPUT_DIR, file_name))
     fps = cap.get(cv2.CAP_PROP_FPS)
-    frame_count = 0
-    while True:
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    for frame_count in range(total_frames):
         ret, frame = cap.read()
         if not ret:
-            break
+            continue
         frame_filename = os.path.join("./cache", f"{frame_count}.jpg")
         cv2.imwrite(frame_filename, frame)
-        frame_count += 1
     cap.release()
 
     # Ausführen der Skelettschaetzung auf den Bildern
