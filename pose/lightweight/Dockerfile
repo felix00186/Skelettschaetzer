@@ -1,16 +1,20 @@
-FROM python:3.10-slim
+FROM pytorch/pytorch:1.8.1-cuda10.2-cudnn7-devel
 
 WORKDIR /app
 COPY requirements.txt .
-RUN apt-get update && \
+RUN rm /etc/apt/sources.list.d/cuda.list &&\
+    rm /etc/apt/sources.list.d/nvidia-ml.list &&\
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub &&\
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64/7fa2af80.pub &&\
+    apt-get update && \
     apt-get install -y --no-install-recommends \
         git \
-        ffmpeg=7:5.1.6-0+deb12u1 \
-        libsm6=2:1.2.3-1 \
-        libxext6=2:1.3.4-1+b1 \
+        ffmpeg \
+        libsm6 \
+        libxext6 \
         wget \
-        ca-certificates=20230311 \
-        coreutils=9.1-1 && \
+        ca-certificates \
+        coreutils && \
     rm -rf /var/lib/apt/lists/* &&\
     pip install -r requirements.txt &&\
     git clone https://github.com/Daniil-Osokin/lightweight-human-pose-estimation.pytorch.git pose_estimation
