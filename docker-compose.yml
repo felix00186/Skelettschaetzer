@@ -75,7 +75,7 @@ services:
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   higher-hrnet:
-    build: ./pose/hrnet
+    build: ./pose/higher-hrnet
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
