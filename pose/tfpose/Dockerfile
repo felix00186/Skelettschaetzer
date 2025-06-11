@@ -1,25 +1,24 @@
-FROM nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu20.04
+FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu18.04
 
 # Systemabhaengigkeiten installieren
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y \
-        python3-pip=20.0.2-5ubuntu1.11 \
-        python3-dev=3.8.2-0ubuntu2 \
+        python3-pip=9.0.1-2.3~ubuntu1.18.04.8 \
+        python3-dev=3.6.7-1~18.04 \
         git \
         wget \
-        ffmpeg=7:4.2.7-0ubuntu0.1 \
-        libsm6=2:1.2.3-1 \
-        libxext6=2:1.3.4-0ubuntu1 \
+        ffmpeg=7:3.4.11-0ubuntu0.1 \
+        libsm6=2:1.2.2-1 \
+        libxext6=2:1.3.3-1 \
         libxrender-dev=1:0.9.10-1 \
-        cmake \
-        libglib2.0-0=2.64.6-1~ubuntu20.04.9 \
-        libgtk2.0-dev=2.24.32-4ubuntu4.1 \
-        pkg-config=0.29.1-0ubuntu4 \
+        cmake=3.10.2-1ubuntu2.18.04.2 \
+        libglib2.0-0=2.56.4-0ubuntu0.18.04.9 \
+        libgtk2.0-dev=2.24.32-1ubuntu1 \
+        pkg-config=0.29.1-0ubuntu2 \
         swig && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    ln -s /usr/bin/python3 /usr/bin/python
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Miniconda installieren
