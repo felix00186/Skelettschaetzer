@@ -81,14 +81,24 @@ services:
 
   deeppose:
     build:
-      context: ./pose
-      dockerfile: ./deeppose/Dockerfile
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/deeppose/deeppose_res152_coco_256x192-7df89a88_20210205.pth
     restart: "no"
+    environment:
+      OUTPUT_DIR: deeppose
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_regression/coco/td-reg_res152_8xb64-210e_coco-256x192.py
+      POSE_CHECKPOINT: deeppose_res152_coco_256x192-7df89a88_20210205.pth
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   cpm:
     build:
-      context: ./pose
-      dockerfile: ./cpm/Dockerfile
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
     restart: "no"
+    environment:
+      OUTPUT_DIR: cpm
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
+      POSE_CHECKPOINT: td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
     <<: [*gpu, *depends-on-video-loader, *input-volume]

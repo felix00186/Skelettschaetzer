@@ -13,17 +13,5 @@ Die Technologie entstammt diesem Paper:
 }
 ```
 
-## Implementierung
-Implementiert wurde der Skelettschätzer mit Hilfe von
-MMPose. Dieses Softwarepaket, das zahlreiche Skelettschätzer
-unterstützt, finden Sie in diesem Repository: https://github.com/open-mmlab/mmpose.git
-
-Sie können auf das Projekt folgendermaßen verweisen:
-```bibtex
-@misc{mmpose2020,
-    title={OpenMMLab Pose Estimation Toolbox and Benchmark},
-    author={MMPose Contributors},
-    howpublished = {\url{https://github.com/open-mmlab/mmpose}},
-    year={2020}
-}
-```
+DeepPose wurde mit Hilfe von MMPose implementiert. Dieses findet sich im folgenden Repository:
+https://github.com/open-mmlab/mmpose.git

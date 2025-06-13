@@ -3,12 +3,6 @@ DeepPose ist ein auf Deep Learning basierender Skelettschätzer, der menschliche
 
 <img src="./demo.gif" height="300px" />
 
-## Hinweis
-⚠️ Im ausgegebenen Video ist sowohl Objekt-/Personenerkennung als auch Skelettschätzung implementiert.
-Deeppose hat dabei nur die Skelettschätzung vorgenommen. Im gegebenen Softwarepaket
-war allerdings die Skelettschätzung nur in Verbindung mit einer Objekterkennung möglich, die
-DeepPose nicht bietet. Deshalb wurde diese aus einer fremden Quelle (Faster R-CNN) hinzugefügt.
-
 ## Quelle
 Dem Projekt liegt das folgende Paper zugrunde: **DeepPose: Human Pose Estimation via Deep Neural Networks** (https://openaccess.thecvf.com/content_cvpr_2014/html/Toshev_DeepPose_Human_Pose_2014_CVPR_paper.html)
 
