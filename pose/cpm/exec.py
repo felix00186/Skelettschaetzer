@@ -12,14 +12,9 @@ with open("./joint_names.json", "r") as f:
 pose_model_config = os.environ["POSE_CONFIG"]
 pose_model_weights = os.environ["POSE_CHECKPOINT"]
 
-det_model_config = os.environ["DET_CONFIG"]
-det_model_weights = os.environ["DET_CHECKPOINT"]
-
 inferencer = MMPoseInferencer(
     pose2d=pose_model_config,
-    pose2d_weights=pose_model_weights#,
-    #det_model=det_model_config,
-    #det_weights=det_model_weights
+    pose2d_weights=pose_model_weights
 )
 
 # Verzeichnisse
@@ -29,24 +24,6 @@ os.makedirs(output_dir, exist_ok=True)
 
 # Alle MP4-Videos im Input-Ordner
 input_files = [f for f in os.listdir(input_dir) if f.endswith(".mp4")]
-
-import numpy
-def simplify(obj):
-    if isinstance(obj, numpy.ndarray):
-        return list(obj.shape)
-    elif isinstance(obj, dict):
-        return {key: simplify(value) for key, value in obj.items()}
-    elif isinstance(obj, list):
-        return [simplify(item) for item in obj]
-    elif isinstance(obj, tuple):
-        return tuple(simplify(item) for item in obj)
-    else:
-        try:
-            json.dumps(obj)
-        except:
-            return str(type(obj))
-        else:
-            return obj
 
 # Verarbeite jedes Video einzeln
 for file_name in input_files:
@@ -66,9 +43,6 @@ for file_name in input_files:
     for result in result_generator:
         vis_frame = result["visualization"][0]
         writer.write(vis_frame)
-
-        with open("/data/data.json", "w") as f:
-            json.dump(simplify(result), f, indent=2)
 
         frame_keypoints = []
         instances = result["predictions"][0]

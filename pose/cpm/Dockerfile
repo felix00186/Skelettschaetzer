@@ -29,11 +29,8 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
 WORKDIR /app/mmdetection
 ENV POSE_CONFIG=configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
 ENV POSE_CHECKPOINT=td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
-ENV DET_CONFIG=configs/faster_rcnn/faster-rcnn_x101-64x4d_fpn_ms-3x_coco.py
-ENV DET_CHECKPOINT=faster-rcnn_x101-64x4d_fpn_ms-3x_coco
 RUN pip install -e . &&\
-    wget https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/$POSE_CHECKPOINT &&\
-    wget https://download.openxlab.org.cn/models/mmdetection/FasterR-CNN/weight/faster-rcnn_x101-64x4d_fpn_ms-3x_coco
+    wget https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/$POSE_CHECKPOINT
 COPY exec.py .
 COPY joint_names.json .
 
