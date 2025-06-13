@@ -8,7 +8,7 @@ with open("./joint_names.json", "r") as f:
     joint_names = json.load(f)
 
 # Initialisiere den Inferencer
-dataset_path = os.environ["DATASET_PATH"]
+dataset_path = os.environ["BASE_PATH"]
 pose_model_config = os.environ["POSE_CONFIG"]
 pose_model_weights = dataset_path + os.environ["POSE_CHECKPOINT"]
 
