@@ -2,7 +2,7 @@ FROM pytorch/pytorch:1.8.1-cuda10.2-cudnn7-devel
 
 
 WORKDIR /app
-COPY requirements.txt .
+COPY _SHARED_mmpose/requirements.txt .
 RUN rm /etc/apt/sources.list.d/cuda.list &&\
     rm /etc/apt/sources.list.d/nvidia-ml.list &&\
     apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub &&\
@@ -23,10 +23,11 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
 WORKDIR /app/mmpose
 ENV POSE_CONFIG=configs/body_2d_keypoint/topdown_regression/coco/td-reg_res152_8xb64-210e_coco-256x192.py
 ENV POSE_CHECKPOINT=deeppose_res152_coco_256x192-7df89a88_20210205.pth
+ENV OUTPUT_DIR=deeppose
 RUN pip install -e . &&\
     wget https://download.openmmlab.com/mmpose/top_down/deeppose/$POSE_CHECKPOINT
-COPY exec.py .
-COPY joint_names.json .
+COPY _SHARED_mmpose/exec.py .
+COPY _SHARED_mmpose/joint_names.json .
 
 
 CMD ["python", "exec.py"]

@@ -2,7 +2,7 @@ FROM pytorch/pytorch:1.8.1-cuda10.2-cudnn7-devel
 
 
 WORKDIR /app
-COPY requirements.txt .
+COPY _SHARED_mmpose/requirements.txt .
 RUN rm /etc/apt/sources.list.d/cuda.list &&\
     rm /etc/apt/sources.list.d/nvidia-ml.list &&\
     apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/3bf863cc.pub &&\
@@ -23,10 +23,11 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
 WORKDIR /app/mmpose
 ENV POSE_CONFIG=configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
 ENV POSE_CHECKPOINT=td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
+ENV OUTPUT_DIR=cpm
 RUN pip install -e . &&\
     wget https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/$POSE_CHECKPOINT
-COPY exec.py .
-COPY joint_names.json .
+COPY _SHARED_mmpose/exec.py .
+COPY _SHARED_mmpose/joint_names.json .
 
 
 CMD ["python", "exec.py"]

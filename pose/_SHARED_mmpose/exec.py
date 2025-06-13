@@ -19,7 +19,7 @@ inferencer = MMPoseInferencer(
 
 # Verzeichnisse
 input_dir = "/data/input"
-output_dir = "/data/cpm"
+output_dir = f"/data/{os.environ['OUTPUT_DIR']}"
 os.makedirs(output_dir, exist_ok=True)
 
 # Alle MP4-Videos im Input-Ordner
