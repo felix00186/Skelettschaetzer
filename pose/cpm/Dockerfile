@@ -21,13 +21,23 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
     mim install mmdet &&\
     git clone https://github.com/open-mmlab/mmpose.git
 WORKDIR /app/mmpose
+ENV DATASET_PATH=/app/mmpose/configs/_base_/datasets/
+ENV POSE_CONFIG=configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
+ENV POSE_CHECKPOINT=td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
+ENV DET_CONFIG=rtmdet_s_8xb32-300e_coco.py
+ENV DET_CHECKPOINT=cspnext-s_imagenet_600e.pth
 RUN pip install -e . &&\
-    wget https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth &&\
-    wget https://raw.githubusercontent.com/open-mmlab/mmpose/refs/heads/dev-1.x/configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py -O configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
+    mkdir models &&\
+    wget https://raw.githubusercontent.com/open-mmlab/mmpose/refs/heads/dev-1.x/$POSE_CONFIG -O $POSE_CONFIG
+WORKDIR $DATASET_PATH
+RUN wget https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/$POSE_CHECKPOINT &&\
+    wget https://raw.githubusercontent.com/open-mmlab/mmdetection/621b8c8dc1bed2d6116eed8b741d8d356e3f372a/configs/rtmdet/$DET_CONFIG &&\
+    sed -i "s=https://download.openmmlab.com/mmdetection/v3.0/rtmdet/cspnext_rsb_pretrain/cspnext-s_imagenet_600e.pth=$DET_CHECKPOINT=g" $DET_CONFIG &&\
+    wget https://download.openmmlab.com/mmdetection/v3.0/rtmdet/cspnext_rsb_pretrain/$DET_CHECKPOINT &&\
+    wget https://raw.githubusercontent.com/open-mmlab/mmdetection/621b8c8dc1bed2d6116eed8b741d8d356e3f372a/configs/rtmdet/rtmdet_l_8xb32-300e_coco.py
+WORKDIR /app/mmpose
 COPY exec.py .
 COPY joint_names.json .
-ENV POSE_CONFIG=configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
-ENV POSE_CHECKPOINT=./td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
 
 
 CMD ["python", "exec.py"]

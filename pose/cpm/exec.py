@@ -1,88 +1,69 @@
 import os
-import cv2
 import json
-import numpy
+import cv2
+from mmpose.apis import MMPoseInferencer
 
-from mmpose.apis import inference_top_down_pose_model, init_pose_model, vis_pose_result
-from mmpose.core import Smoother
-from mmpose.datasets import DatasetInfo
-
-
+# Lade die Namen der Gelenke
 with open("./joint_names.json", "r") as f:
     joint_names = json.load(f)
 
-# Input-Daten
-pose_config = os.environ["POSE_CONFIG"]
-pose_checkpoint = os.environ["POSE_CHECKPOINT"]
+# Initialisiere den Inferencer
+dataset_path = os.environ["DATASET_PATH"]
+pose_model_config = os.environ["POSE_CONFIG"]
+pose_model_weights = dataset_path + os.environ["POSE_CHECKPOINT"]
+
+det_model_config = dataset_path + os.environ["DET_CONFIG"]
+det_model_weights = dataset_path + os.environ["DET_CHECKPOINT"]
+
+inferencer = MMPoseInferencer(
+    pose2d=pose_model_config,
+    pose2d_weights=pose_model_weights,
+    det_model=det_model_config,
+    det_weights=det_model_weights
+)
+
+# Verzeichnisse
 input_dir = "/data/input"
-input_files = list(filter(lambda s: s.endswith(".mp4"), os.listdir(input_dir)))
 output_dir = "/data/cpm"
 os.makedirs(output_dir, exist_ok=True)
-device = "cuda:0"
 
-# Initialisierung des Netzwerkes
-pose_model = init_pose_model(pose_config, pose_checkpoint, device=device.lower())
-dataset = pose_model.cfg.data['test']['type']
-dataset_info = pose_model.cfg.data['test'].get('dataset_info', None)
-if dataset_info is not None:
-    dataset_info = DatasetInfo(dataset_info)
+# Alle MP4-Videos im Input-Ordner
+input_files = [f for f in os.listdir(input_dir) if f.endswith(".mp4")]
 
-# Videos laden
+# Verarbeite jedes Video einzeln
 for file_name in input_files:
-    cap = cv2.VideoCapture(os.path.join(input_dir, file_name))
-    assert cap.isOpened(), f'Faild to load video file {file_name}'
+    input_path = os.path.join(input_dir, file_name)
+    cap = cv2.VideoCapture(input_path)
     fps = cap.get(cv2.CAP_PROP_FPS)
-    size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
-            int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    videoWriter = cv2.VideoWriter(os.path.join(output_dir, file_name), fourcc, fps, size)
-    output_layer_names = None
-    next_id = 0
-    pose_results = []
-    data = []
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    for frame_number in range(total_frames):
-        flag, img = cap.read()
-        if not flag:
-            data.append([])
-            continue
-        person_results = [{'bbox': numpy.array([0, 0, size[0], size[1]])}]
-
-        pose_results, returned_outputs = inference_top_down_pose_model(
-            pose_model,
-            img,
-            person_results,
-            dataset=dataset,
-            dataset_info=dataset_info,
-            return_heatmap=False,
-            outputs=output_layer_names)
-
-        # strukturierte Daten erstellen
-        frame_data = []
-        for human in pose_results:
-            frame_data.append({joint_names[i]:
-               {
-                   "x": float(info[0]),
-                   "y": float(info[1])
-               }
-            for i, info in enumerate(human["keypoints"])})
-        data.append(frame_data)
-
-        # Bild generieren
-        vis_img = vis_pose_result(
-            pose_model,
-            img,
-            pose_results,
-            radius=4,
-            thickness=1,
-            dataset=dataset,
-            dataset_info=dataset_info,
-            kpt_score_thr=0.5,
-            show=False)
-        videoWriter.write(vis_img)
-
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     cap.release()
-    videoWriter.release()
 
-    with open(os.path.join(output_dir, file_name.replace(".mp4", ".json")), "w") as f:
-        json.dump(data, f)
+    output_path = os.path.join(output_dir, file_name)
+    writer = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'mp4v'), fps, (width, height))
+
+    keypoints_json = []
+    result_generator = inferencer(input_path, return_vis=True)
+
+    for result in result_generator:
+        vis_frame = result["visualization"]
+        writer.write(vis_frame)
+
+        frame_keypoints = []
+        instances = result["predictions"][0]["keypoints"]
+        for person in instances:
+            person_dict = {
+                joint_names[i]: {"x": float(x), "y": float(y)}
+                for i, (x, y, score) in enumerate(person)
+                if score >= 0.1  # nur wenn erkennbar
+            }
+            frame_keypoints.append(person_dict)
+
+        keypoints_json.append(frame_keypoints)
+
+    writer.release()
+
+    # Speichere Keypoints als JSON
+    json_path = os.path.join(output_dir, file_name.replace(".mp4", ".json"))
+    with open(json_path, "w") as f:
+        json.dump(keypoints_json, f)
