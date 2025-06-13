@@ -83,3 +83,8 @@ services:
     build: ./pose/deeppose
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
+
+  cpm:
+    build: ./pose/cpm
+    restart: "no"
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
