@@ -18,6 +18,58 @@ x-volume: &input-volume
   volumes:
     - ${INPUT_FOLDER}:/data
 
+x-depends-block-1: &depends-on-block1
+  depends_on:
+    blazepose:
+      condition: service_completed_successfully
+    lightweight:
+      condition: service_completed_successfully
+    deeppose:
+      condition: service_completed_successfully
+    densepose:
+      condition: service_completed_successfully
+    tfpose:
+      condition: service_completed_successfully
+    higher-hrnet:
+      condition: service_completed_successfully
+
+x-depends-block-2: &depends-on-block2
+  depends_on:
+    cpm:
+      condition: service_completed_successfully
+    hourglass:
+      condition: service_completed_successfully
+    simplebaseline2d:
+      condition: service_completed_successfully
+    dsnt:
+      condition: service_completed_successfully
+    hrnet:
+      condition: service_completed_successfully
+    ipr:
+      condition: service_completed_successfully
+
+x-depends-block-3: &depends-on-block3
+  depends_on:
+    hrnetv2:
+      condition: service_completed_successfully
+    mspn:
+      condition: service_completed_successfully
+    scnet:
+      condition: service_completed_successfully
+    rsn:
+      condition: service_completed_successfully
+    litehrnet:
+      condition: service_completed_successfully
+
+x-depends-block-4: &depends-on-block4
+  depends_on:
+    vipnas:
+      condition: service_completed_successfully
+    debias:
+      condition: service_completed_successfully
+    simcc:
+      condition: service_completed_successfully
+
 
 services:
 
@@ -31,20 +83,7 @@ services:
   codecs:
     build: ./codecs
     restart: "no"
-    <<: *input-volume
-    depends_on:
-      blazepose:
-        condition: service_completed_successfully
-      lightweight:
-        condition: service_completed_successfully
-      deeppose:
-        condition: service_completed_successfully
-      densepose:
-        condition: service_completed_successfully
-      tfpose:
-        condition: service_completed_successfully
-      higher-hrnet:
-        condition: service_completed_successfully
+    <<: [*input-volume, *depends-on-block4]
 
   data-transformer:
     build: ./data_transformer
@@ -53,7 +92,7 @@ services:
       - codecs
     <<: *input-volume
 
-  # Skelettschaetzer
+  # Skelettschaetzer Block 1
   blazepose:
     build: ./pose/blazepose
     restart: "no"
@@ -101,4 +140,160 @@ services:
       OUTPUT_DIR: cpm
       POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
       POSE_CHECKPOINT: td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
-    <<: [*gpu, *depends-on-video-loader, *input-volume]
+    <<: [*gpu, *depends-on-block1, *input-volume]
+
+  hourglass:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/hourglass/hourglass52_coco_384x384-be91ba2b_20200812.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: hourglass
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_hourglass52_8xb32-210e_coco-384x384.py
+      POSE_CHECKPOINT: hourglass52_coco_384x384-be91ba2b_20200812.pth
+    <<: [*gpu, *depends-on-block1, *input-volume]
+
+  simplebaseline2d:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/resnet/res152_coco_wholebody_384x288-eab8caa8_20201004.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: SimpleBaseline2D
+      POSE_CONFIG: configs/wholebody_2d_keypoint/topdown_heatmap/coco-wholebody/td-hm_res152_8xb32-210e_coco-wholebody-384x288.py
+      POSE_CHECKPOINT: res152_coco_wholebody_384x288-eab8caa8_20201004.pth
+    <<: [*gpu, *depends-on-block1, *input-volume]
+
+  dsnt:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/integral_regression/coco/ipr_res50_dsnt-8xb64-210e_coco-256x256-441eedc0_20220913.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: DSNT
+      POSE_CONFIG: configs/body_2d_keypoint/integral_regression/coco/ipr_res50_dsnt-8xb64-210e_coco-256x256.py
+      POSE_CHECKPOINT: ipr_res50_dsnt-8xb64-210e_coco-256x256-441eedc0_20220913.pth
+    <<: [*gpu, *depends-on-block1, *input-volume]
+
+  hrnet:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_wholebody_384x288-6e061c6a_20200922.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: HRNet
+      POSE_CONFIG: configs/wholebody_2d_keypoint/topdown_heatmap/coco-wholebody/td-hm_hrnet-w48_8xb32-210e_coco-wholebody-384x288.py
+      POSE_CHECKPOINT: hrnet_w48_coco_wholebody_384x288-6e061c6a_20200922.pth
+    <<: [*gpu, *depends-on-block1, *input-volume]
+
+  ipr:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/integral_regression/coco/ipr_res50_8xb64-210e_coco-256x256-a3898a33_20220913.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: IPR
+      POSE_CONFIG: configs/body_2d_keypoint/integral_regression/coco/ipr_res50_8xb64-210e_coco-256x256.py
+      POSE_CHECKPOINT: ipr_res50_8xb64-210e_coco-256x256-a3898a33_20220913.pth
+    <<: [*gpu, *depends-on-block1, *input-volume]
+
+  hrnetv2:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/hand/udp/hrnetv2_w18_onehand10k_256x256_udp-0d1b515d_20210330.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: HRNetv2
+      POSE_CONFIG: configs/hand_2d_keypoint/topdown_heatmap/onehand10k/td-hm_hrnetv2-w18_udp-8xb64-210e_onehand10k-256x256.py
+      POSE_CHECKPOINT: hrnetv2_w18_onehand10k_256x256_udp-0d1b515d_20210330.pth
+    <<: [*gpu, *depends-on-block2, *input-volume]
+
+  mspn:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/mspn/4xmspn50_coco_256x192-7b837afb_20201123.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: MSPN
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_4xmspn50_8xb32-210e_coco-256x192.py
+      POSE_CHECKPOINT: 4xmspn50_coco_256x192-7b837afb_20201123.pth
+    <<: [*gpu, *depends-on-block2, *input-volume]
+
+  scnet:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/scnet/scnet101_coco_384x288-0b6e631b_20200709.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: SCNet
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_scnet101_8xb48-210e_coco-384x288.py
+      POSE_CHECKPOINT: scnet101_coco_384x288-0b6e631b_20200709.pth
+    <<: [*gpu, *depends-on-block2, *input-volume]
+
+  rsn:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/td-hm_3xrsn50_8xb32-210e_coco-256x192-c3e3c4fe_20221013.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: RSN
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_3xrsn50_8xb32-210e_coco-256x192.py
+      POSE_CHECKPOINT: td-hm_3xrsn50_8xb32-210e_coco-256x192-c3e3c4fe_20221013.pth
+    <<: [*gpu, *depends-on-block2, *input-volume]
+
+  litehrnet:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/litehrnet/litehrnet30_coco_384x288-a3aef5c4_20210626.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: LiteHRNet
+      POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_litehrnet-30_8xb32-210e_coco-384x288.py
+      POSE_CHECKPOINT: litehrnet30_coco_384x288-a3aef5c4_20210626.pth
+    <<: [*gpu, *depends-on-block2, *input-volume]
+
+  vipnas:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/vipnas/vipnas_res50_wholebody_256x192_dark-67c0ce35_20211112.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: ViPNAS
+      POSE_CONFIG: configs/wholebody_2d_keypoint/topdown_heatmap/coco-wholebody/td-hm_vipnas-res50_dark-8xb64-210e_coco-wholebody-256x192.py
+      POSE_CHECKPOINT: vipnas_res50_wholebody_256x192_dark-67c0ce35_20211112.pth
+    <<: [*gpu, *depends-on-block3, *input-volume]
+
+  debias:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/integral_regression/coco/ipr_res50_debias-8xb64-210e_coco-256x256-055a7699_20220913.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: Debias_IPR
+      POSE_CONFIG: configs/body_2d_keypoint/integral_regression/coco/ipr_res50_debias-8xb64-210e_coco-256x256.py
+      POSE_CHECKPOINT: ipr_res50_debias-8xb64-210e_coco-256x256-055a7699_20220913.pth
+    <<: [*gpu, *depends-on-block3, *input-volume]
+
+  simcc:
+    build:
+      context: ./pose/mmpose
+      args:
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/simcc/coco/simcc_res50_8xb32-140e_coco-384x288-45c3ba34_20220913.pth
+    restart: "no"
+    environment:
+      OUTPUT_DIR: SimCC
+      POSE_CONFIG: configs/body_2d_keypoint/simcc/coco/simcc_res50_8xb32-140e_coco-384x288.py
+      POSE_CHECKPOINT: simcc_res50_8xb32-140e_coco-384x288-45c3ba34_20220913.pth
+    <<: [*gpu, *depends-on-block3, *input-volume]

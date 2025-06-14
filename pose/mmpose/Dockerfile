@@ -2,7 +2,6 @@ FROM pytorch/pytorch:1.8.1-cuda10.2-cudnn7-devel
 
 
 WORKDIR /app
-ARG POSE_CHECKPOINT_DOWNLOAD
 COPY requirements.txt .
 RUN rm /etc/apt/sources.list.d/cuda.list &&\
     rm /etc/apt/sources.list.d/nvidia-ml.list &&\
@@ -16,16 +15,17 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
     apt-get clean &&\
     rm -rf /var/lib/apt/lists/* &&\
     pip install -r requirements.txt --use-deprecated=legacy-resolver &&\
-    mim install "mmcv==2.2.0" &&\
+    mim install "mmcv==2.0.0" &&\
     mim install mmengine &&\
     mim install mmdet &&\
-    git clone https://github.com/open-mmlab/mmpose.git &&\
-    cd mmpose && git reset --hard 71ec36ebd63c475ab589afc817868e749a61491f
+    git clone https://github.com/open-mmlab/mmpose.git
 WORKDIR /app/mmpose
-RUN pip install -e . &&\
-    wget "${POSE_CHECKPOINT_DOWNLOAD}"
+RUN git checkout 71ec36ebd63c475ab589afc817868e749a61491f &&\
+    pip install -e .
 COPY exec.py .
 COPY joint_names.json .
+ARG POSE_CHECKPOINT_DOWNLOAD
+RUN wget "${POSE_CHECKPOINT_DOWNLOAD}"
 
 
 CMD ["python", "exec.py"]

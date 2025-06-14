@@ -25,6 +25,7 @@ os.makedirs(output_dir, exist_ok=True)
 # Alle MP4-Videos im Input-Ordner
 input_files = [f for f in os.listdir(input_dir) if f.endswith(".mp4")]
 
+
 # Verarbeite jedes Video einzeln
 for file_name in input_files:
     input_path = os.path.join(input_dir, file_name)
@@ -48,8 +49,9 @@ for file_name in input_files:
         instances = result["predictions"][0]
         for person in instances:
             person_dict = {
-                joint_names[i]: {"x": float(point[0]), "y": float(point[1])}
+                str(i): {"x": float(point[0]), "y": float(point[1])}
                 for i, (point, score) in enumerate(zip(person["keypoints"], person["keypoint_scores"]))
+                if score > 0.5
             }
             frame_keypoints.append(person_dict)
 

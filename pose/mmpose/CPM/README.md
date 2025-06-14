@@ -1,6 +1,8 @@
 # CPM
 CPM steht für Convolutional Pose Machines. Das Verfahren nutzt eine mehrstufige Architektur aus Convolutional Neural Networks, bei der in jeder Stufe sogenannte Belief Maps für die Positionen der Körperteile erzeugt werden. Diese Karten beschreiben die Wahrscheinlichkeitsverteilung für jedes Gelenk im Bild. Die Netzwerke in den späteren Stufen verwenden sowohl Bildinformationen als auch die Belief Maps aus den vorherigen Stufen, um schrittweise genauere Vorhersagen zu treffen. Durch Zwischenverluste an jeder Stufe wird das Problem verschwindender Gradienten beim Training vermieden und die Lernleistung verbessert.
 
+<img src="./demo.gif" height="300px" />
+
 ## Quelle
 Die Technologie entstammt diesem Paper:
 ```bibtex
