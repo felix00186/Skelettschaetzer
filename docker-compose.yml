@@ -26,17 +26,13 @@ x-depends-block-1: &depends-on-block1
       condition: service_completed_successfully
     deeppose:
       condition: service_completed_successfully
-    densepose:
-      condition: service_completed_successfully
     tfpose:
       condition: service_completed_successfully
-    higher-hrnet:
+    cpm:
       condition: service_completed_successfully
 
 x-depends-block-2: &depends-on-block2
   depends_on:
-    cpm:
-      condition: service_completed_successfully
     hourglass:
       condition: service_completed_successfully
     simplebaseline2d:
@@ -68,6 +64,10 @@ x-depends-block-4: &depends-on-block4
     debias:
       condition: service_completed_successfully
     simcc:
+      condition: service_completed_successfully
+    higher-hrnet:
+      condition: service_completed_successfully
+    densepose:
       condition: service_completed_successfully
 
 
@@ -140,7 +140,7 @@ services:
       OUTPUT_DIR: cpm
       POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
       POSE_CHECKPOINT: td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
-    <<: [*gpu, *depends-on-block1, *input-volume]
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   hourglass:
     build:
