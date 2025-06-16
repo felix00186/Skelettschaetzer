@@ -42,7 +42,7 @@ for file_name in input_files:
     result_generator = inferencer(input_path, return_vis=True)
 
     for result in result_generator:
-        vis_frame = result["visualization"][0]
+        vis_frame = cv2.cvtColor(result["visualization"][0], cv2.COLOR_RGB2BGR)
         writer.write(vis_frame)
 
         frame_keypoints = []
