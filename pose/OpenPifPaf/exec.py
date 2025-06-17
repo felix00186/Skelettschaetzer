@@ -1,189 +1,82 @@
 import os
-import time
-import json
-import torch
+import glob
+import openpifpaf
+from openpifpaf import show
+import cv2
+import numpy
+from PIL import Image
+import io
+import matplotlib.pyplot as plt
 
-from openpifpaf import decoder, logger, network, show, visualizer
-from openpifpaf.predictor import Predictor
-from openpifpaf.stream import Stream
-from openpifpaf.plugins.coco import CocoPose
 
-# Konfiguration (konstant oder über Umgebungsvariablen)
-INPUT_FOLDER = "/data/input"
-OUTPUT_FOLDER = "/data/OpenPifPaf"
+# Ordner mit Videos
+VIDEO_DIR = '/data/input'
+OUTPUT_DIR = '/data/OpenPifPaf'
 
-# Gerätewahl
-device = torch.device('cuda')
-pin_memory = True
+# Modell-Checkpoint
+CHECKPOINT = os.environ['CHECKPOINT']
 
-# Module konfigurieren
-class Args:
-    def __init__(self):
-        self.device = device
-        self.pin_memory = pin_memory
-        self.decoder_workers = 1
-        self.head_metas = None
-        self.checkpoint = None
-        self.force_complete_pose = False
-        self.force_dense_connections = False
-        self.seed_threshold = 0.2
-        self.instance_threshold = 0.2
-        self.keypoint_threshold = 0.05
-        self.ablation_pose = None
-        self.ablation_decoder = None
-        self.headnets = None
-        self.decoder = 'caf'
-        self.debug = False
-        self.dense_connections = None
-        self.show_decoder_heatmap = False
-        self.show_only_decoded_connections = False
-        self.annotation_filter = False
-        self.checkpoint_reset_heads = False
-        self.share_decode = False
-        self.align_pose_heads = False
-        self.line_width = 6
-        self.dpi = None
-        self.output_directory = None
-        self.json_output = None
-        self.video_output = None
-        self.separate_debug_ax = False
-        self.disable_cuda = False
-        self.debug_indices = []
-        self.profile_decoder = False
-        self.cif_th = 0.3
-        self.caf_th = 0.1
-        self.caf_seeds = False
-        self.force_complete_caf_th = 0.15
-        self.nms_before_force_complete = True
-        self.keypoint_threshold_rel = 0.5
-        self.greedy = False
-        self.connection_method = "cif"
-        self.reverse_match = True
-        self.ablation_cifseeds_nms = False
-        self.ablation_cifseeds_no_rescore = False
-        self.ablation_caf_no_rescore = False
-        self.xcit_out_channels = [64, 128, 256, 512]
-        self.mobilenetv2_pretrained = True
-        self.xcit_out_maxpool = True
-        self.squeezenet_pretrained = True
-        self.resnet_pretrained = True
-        self.resnet_pool0_stride = 2
-        self.shufflenetv2k_input_conv2_stride = 2
-        self.shufflenetv2_pretrained = True
-        self.swin_drop_path_rate = 0.1
-        self.swin_input_upsample = False
-        self.xcit_pretrained = True
-        self.swin_use_fpn = True
-        self.mobilenetv3_pretrained = True
-        self.shufflenetv2k_input_conv2_outchannels = 24
-        self.shufflenetv2k_stage4_dilation = 1
-        self.shufflenetv2k_kernel = 3
-        self.swin_fpn_out_channels = 256
-        self.swin_fpn_level = [0, 1, 2, 3]
-        self.resnet_input_conv_stride = 2
-        self.swin_pretrained = True
-        self.shufflenetv2k_conv5_as_stage = False
-        self.shufflenetv2k_instance_norm = False
-        self.resnet_input_conv2_stride = 1
-        self.shufflenetv2k_group_norm = False
-        self.shufflenetv2k_leaky_relu = False
-        self.resnet_block5_dilation = 1
-        self.resnet_remove_last_block = False
-        self.cf3_dropout = 0.2
-        self.cf3_inplace_ops = True
-        self.basenet = os.environ["CHECKPOINT"]
-        self.cross_talk = False
-        self.download_progress = True
-        self.head_consolidation = True
-        self.batch_size = 1
-        self.fast_rescaling = False
-        self.loader_workers = 4
-        self.long_edge = 640
-        self.save_all = False
-        self.show = False
-        self.image_width = 640
-        self.image_height = 480
-        self.image_dpi_factor = 1.0
-        self.white_overlay = False
-        self.image_min_dpi = 100
-        self.show_file_extension = True
-        self.show_box = True
-        self.show_joint_scales = True
-        self.show_joint_confidences = True
-        self.show_decoding_order = False
-        self.show_frontier_order = False
-        self.textbox_alpha = 0.6
-        self.text_color = "white"
-        self.monocolor_connections = False
-        self.skeleton_solid_threshold = 0.3
-        self.font_size = 12
-        self.video_fps = 30
-        self.video_dpi = 100
-        self.horizontal_flip = False
-        self.scale = 1.0
-        self.start_frame = 0
-        self.start_msec = 0
-        self.crop = None
-        self.rotate = 0
-        self.max_frames = None
 
-args = Args()
-head_metas = [CocoPose()]
-decoder.configure(args)
-network.Factory.factory(head_metas=head_metas).configure(args)
-Predictor.configure(args)
-show.configure(args)
-Stream.configure(args)
-visualizer.configure(args)
+def process_video(video_path, predictor, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
 
-# Ordner vorbereiten
-os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+    video_name = os.path.splitext(os.path.basename(video_path))[0]
+    output_path = os.path.join(output_dir, f"{video_name}_annotated.mp4")
 
-# Alle .mp4-Dateien verarbeiten
-video_files = [f for f in os.listdir(INPUT_FOLDER) if f.endswith('.mp4')]
+    cap = cv2.VideoCapture(video_path)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-for filename in video_files:
-    input_path = os.path.join(INPUT_FOLDER, filename)
-    base_name = os.path.splitext(filename)[0]
+    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+    writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
-    # Ausgabedateien definieren
-    video_out_path = os.path.join(OUTPUT_FOLDER, f"{base_name}.mp4")
-    json_out_path = os.path.join(OUTPUT_FOLDER, f"{base_name}.json")
+    frame_index = 0
+    while True:
+        success, frame = cap.read()
+        if not success:
+            break
 
-    if os.path.exists(video_out_path):
-        os.remove(video_out_path)
-    if os.path.exists(json_out_path):
-        os.remove(json_out_path)
+        predictions, _, _ = predictor.numpy_image(frame)
+
+        # Annotiertes Bild als PIL aus dem Canvas holen
+        buf = io.BytesIO()
+        painter = show.annotation_painter.AnnotationPainter()
+
+        with show.Canvas.image(frame) as ax:
+            painter.annotations(painter, ax, predictions)
+
+            fig = ax.get_figure()
+            fig.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+            plt.close(fig)
+
+        buf.seek(0)
+        annotated_pil = Image.open(buf).convert("RGB")
+        annotated_frame = cv2.cvtColor(numpy.array(annotated_pil), cv2.COLOR_RGB2BGR)
+
+        # Resize auf Originalgröße (Canvas kann leicht abweichen)
+        annotated_frame = cv2.resize(annotated_frame, (width, height))
+
+        writer.write(annotated_frame)
+        frame_index += 1
+
+    cap.release()
+    writer.release()
+    print(f"Video gespeichert unter: {output_path}")
+
+
+def main():
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     # Predictor initialisieren
-    predictor = Predictor(visualize_image=True, visualize_processed_image=False)
-    capture = Stream(input_path, preprocess=predictor.preprocess)
+    predictor = openpifpaf.Predictor(checkpoint=CHECKPOINT)
 
-    annotation_painter = show.AnnotationPainter()
-    animation = show.AnimationFrame(
-        video_output=video_out_path,
-        second_visual=False
-    )
-    ax, ax_second = animation.frame_init()
-    visualizer.Base.common_ax = ax
+    video_files = glob.glob(os.path.join(VIDEO_DIR, '*.mp4'))  # Alle .mp4 im Ordner
 
-    last_loop = time.perf_counter()
-    for (ax, ax_second), (preds, _, meta) in \
-            zip(animation.iter(), predictor.dataset(capture)):
-        start_post = time.perf_counter()
+    for video_path in video_files:
+        print(f'Starte Verarbeitung: {video_path}')
+        process_video(video_path, predictor, OUTPUT_DIR)
 
-        # strukturierte Daten erstellen
-        with open(json_out_path, 'a+', encoding='utf8') as f:
-            json.dump({
-                'frame': meta['frame_i'],
-                'predictions': [ann.json_data() for ann in preds]
-            }, f, separators=(',', ':'))
-            f.write('\n')
 
-        postprocessing_time = time.perf_counter() - start_post
-        if animation.last_draw_time is not None:
-            postprocessing_time += animation.last_draw_time
-
-        last_loop = time.perf_counter()
-
-print("Alle Videos wurden verarbeitet.")
+if __name__ == '__main__':
+    main()
