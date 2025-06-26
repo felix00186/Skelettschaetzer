@@ -149,7 +149,7 @@ services:
   efficientpose:
     build: ./pose/EfficientPose
     restart: "no"
-    <<: [*gpu, *depends-on-block1, *input-volume]
+    <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   hourglass:
     build:
