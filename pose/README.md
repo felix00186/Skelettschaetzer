@@ -3,7 +3,7 @@ In den Unterordnern dieses Verzeichnisses liegen die Skelettschätzer.
 Klicken Sie sich für mehr Informationen durch.
 ```
 ├ BlazePose
-├ DensePose
+├ DensePose (kein Skelettschätzer)
 ├ HigherHRNet
 ├ Lightweight
 ├ mmpose (Framework)
@@ -21,6 +21,7 @@ Klicken Sie sich für mehr Informationen durch.
 │   ├ SCNet
 │   ├ SimCC
 │   ├ SimpleBaseline2D
-│   ├ ViPNAS
+│   └ ViPNAS
 ├ TfPose
+└ EfficientPose (kein Skelettschätzer)
 ```

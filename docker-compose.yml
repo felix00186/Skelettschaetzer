@@ -30,6 +30,8 @@ x-depends-block-1: &depends-on-block1
       condition: service_completed_successfully
     cpm:
       condition: service_completed_successfully
+    efficientpose:
+      condition: service_completed_successfully
 
 x-depends-block-2: &depends-on-block2
   depends_on:
@@ -143,6 +145,11 @@ services:
       POSE_CONFIG: configs/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288.py
       POSE_CHECKPOINT: td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
     <<: [*gpu, *depends-on-video-loader, *input-volume]
+
+  efficientpose:
+    build: ./pose/EfficientPose
+    restart: "no"
+    <<: [*gpu, *depends-on-block1, *input-volume]
 
   hourglass:
     build:
