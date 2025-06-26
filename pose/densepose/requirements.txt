@@ -1,5 +1,5 @@
-opencv-python
-torchvision
-fvcore
+opencv-python-headless==4.11.0.86
+torchvision==0.16.0
+fvcore==0.1.5.post20221221
 pyyaml
-matplotlib
+matplotlib==3.3.4
