@@ -3,7 +3,7 @@ FROM jupyter/base-notebook
 USER root
 RUN apt update &&\
     apt install -y r-base &&\
-    pip install ipywidgets tomli rpy2 pandas &&\
+    pip install ipywidgets tomli rpy2 pandas ray &&\
     jupyter labextension install @jupyter-widgets/jupyterlab-manager &&\
     Rscript -e "install.packages('tidyverse')"
 WORKDIR /home/jovyan

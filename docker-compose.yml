@@ -67,7 +67,9 @@ x-depends-block-4: &depends-on-block4
       condition: service_completed_successfully
     higher-hrnet:
       condition: service_completed_successfully
-    densepose:
+    #densepose:
+    #  condition: service_completed_successfully
+    openpifpaf:
       condition: service_completed_successfully
 
 
@@ -103,10 +105,10 @@ services:
     restart: "no"
     <<: [*gpu, *depends-on-video-loader, *input-volume]
 
-  densepose:
-    build: ./pose/densepose
-    restart: "no"
-    <<: [*gpu, *depends-on-video-loader, *input-volume]
+  #densepose:
+  #  build: ./pose/densepose
+  #  restart: "no"
+  #  <<: [*gpu, *depends-on-video-loader, *input-volume]
 
   tfpose:
     build: ./pose/tfpose
@@ -296,4 +298,9 @@ services:
       OUTPUT_DIR: SimCC
       POSE_CONFIG: configs/body_2d_keypoint/simcc/coco/simcc_res50_8xb32-140e_coco-384x288.py
       POSE_CHECKPOINT: simcc_res50_8xb32-140e_coco-384x288-45c3ba34_20220913.pth
+    <<: [*gpu, *depends-on-block3, *input-volume]
+
+  openpifpaf:
+    build: ./pose/OpenPifPaf
+    restart: "no"
     <<: [*gpu, *depends-on-block3, *input-volume]
