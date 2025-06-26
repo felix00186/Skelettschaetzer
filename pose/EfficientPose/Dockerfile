@@ -21,8 +21,7 @@ RUN git checkout 64b71190df7ecbdfaa8f34a24c1ed6c4c67693ef &&\
     sed -i "s,/Datasets/Linemod_preprocessed/data/02/rgb/,/cache_input,g" inference.py &&\
     sed -i "s,./predictions/occlusion/,/cache_output,g" inference.py &&\
     mkdir weights
-
-
 COPY exec.py .
 COPY "phi_0_occlusion_best_ADD(-S).h5" "weights/phi_0_occlusion_best_ADD(-S).h5"
+
 CMD ["python", "exec.py"]
