@@ -23,5 +23,6 @@ Klicken Sie sich für mehr Informationen durch.
 │   ├ SimpleBaseline2D
 │   └ ViPNAS
 ├ TfPose
+├ OpenPose
 └ EfficientPose (kein Skelettschätzer)
 ```

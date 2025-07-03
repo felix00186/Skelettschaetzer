@@ -65,13 +65,13 @@ x-depends-block-4: &depends-on-block4
       condition: service_completed_successfully
     debias:
       condition: service_completed_successfully
-    simcc:
-      condition: service_completed_successfully
     higher-hrnet:
       condition: service_completed_successfully
     densepose:
       condition: service_completed_successfully
     openpifpaf:
+      condition: service_completed_successfully
+    openpose:
       condition: service_completed_successfully
 
 
@@ -309,5 +309,10 @@ services:
 
   openpifpaf:
     build: ./pose/OpenPifPaf
+    restart: "no"
+    <<: [*gpu, *depends-on-block3, *input-volume]
+
+  openpose:
+    build: ./pose/OpenPose
     restart: "no"
     <<: [*gpu, *depends-on-block3, *input-volume]

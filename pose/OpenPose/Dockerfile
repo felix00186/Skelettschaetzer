@@ -18,7 +18,8 @@ RUN apt-get update &&\
         libboost-all-dev \
         libcaffe-cuda-dev \
         libhdf5-dev \
-        libatlas-base-dev &&\
+        libatlas-base-dev \
+        ffmpeg &&\
     pip3 install --upgrade pip &&\
     pip3 install numpy opencv-python &&\
     wget https://github.com/Kitware/CMake/releases/download/v3.16.0/cmake-3.16.0-Linux-x86_64.tar.gz && \
@@ -30,4 +31,10 @@ RUN git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose.git .
 WORKDIR /openpose/build
 RUN cmake -DBUILD_PYTHON=ON .. &&\
     make -j `nproc`
+WORKDIR /openpose/models
+RUN ./getModels.sh
 WORKDIR /openpose
+COPY exec.sh .
+
+
+CMD ["/bin/bash", "exec.sh"]
