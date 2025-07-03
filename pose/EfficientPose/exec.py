@@ -32,9 +32,6 @@ def video_to_frames(video_path, output_folder):
     print(f"Fertig. {frame_number} Frames gespeichert in: {output_folder}")
 
 
-import cv2
-import os
-
 def frames_to_video(bilder_pfade, ausgabe_datei, fps=30):
     if not bilder_pfade:
         raise ValueError("Die Liste der Bilder ist leer.")
