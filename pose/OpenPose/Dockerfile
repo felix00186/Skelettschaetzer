@@ -35,6 +35,8 @@ WORKDIR /openpose/models
 RUN ./getModels.sh
 WORKDIR /openpose
 COPY exec.sh .
+COPY joint_names.json .
+COPY json_transform.py .
 
 
 CMD ["/bin/bash", "exec.sh"]

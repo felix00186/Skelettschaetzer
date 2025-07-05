@@ -3,7 +3,9 @@
 # Verzeichnis mit den Videos
 INPUT_DIR="/data/input"
 OUTPUT_DIR="/data/openpose"
+JSON_DIR="/cache"
 mkdir -p $OUTPUT_DIR
+mkdir -p $JSON_DIR
 
 # OpenPose-Binärpfad
 OPENPOSE_BIN="build/examples/openpose/openpose.bin"
@@ -17,7 +19,7 @@ for VIDEO_PATH in "$INPUT_DIR"/*.mp4; do
   FILENAME=$(basename "$VIDEO_PATH" .mp4)
 
   # Zielpfad für JSON-Dateien
-  JSON_PATH="$OUTPUT_DIR/$FILENAME.json"
+  JSON_PATH="$JSON_DIR/$FILENAME"
   OUTPUT_PATH="$OUTPUT_DIR/$FILENAME.mp4"
 
   echo "Verarbeite: $VIDEO_PATH → $JSON_PATH"
@@ -29,3 +31,5 @@ for VIDEO_PATH in "$INPUT_DIR"/*.mp4; do
     --display 0 \
     --render_pose 1
 done
+
+python3 json_transform.py
