@@ -12,6 +12,8 @@ RUN rm /etc/apt/sources.list.d/cuda.list &&\
                        ffmpeg &&\
     pip3 install matplotlib openpifpaf==0.12.14 opencv-python-headless
 COPY exec.sh .
+COPY json_transformer.py .
+COPY joint_names.json .
 
 
 CMD ["/bin/bash", "exec.sh"]
