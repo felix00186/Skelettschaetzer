@@ -30,6 +30,8 @@ for VIDEO_PATH in "$INPUT_DIR"/*.mp4; do
     --write_video "$OUTPUT_PATH" \
     --display 0 \
     --render_pose 1
-done
 
-python3 json_transform.py
+  width=$(ffprobe -v error -select_streams v:0 -show_entries stream=width -of default=noprint_wrappers=1:nokey=1 "$VIDEO_PATH")
+  height=$(ffprobe -v error -select_streams v:0 -show_entries stream=height -of default=noprint_wrappers=1:nokey=1 "$VIDEO_PATH")
+  python3 json_transform.py "$width" "$height" "$FILENAME"
+done
