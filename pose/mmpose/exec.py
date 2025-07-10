@@ -49,7 +49,7 @@ for file_name in input_files:
         instances = result["predictions"][0]
         for person in instances:
             person_dict = {
-                str(i): {"x": float(point[0]), "y": float(point[1])}
+                joint_names[i]: {"x": float(point[0]), "y": float(point[1])}
                 for i, (point, score) in enumerate(zip(person["keypoints"], person["keypoint_scores"]))
                 if score > 0.5
             }

@@ -96,7 +96,6 @@ services:
       - codecs
     <<: *input-volume
 
-  # Skelettschaetzer Block 1
   blazepose:
     build: ./pose/blazepose
     restart: "no"
@@ -126,6 +125,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/deeppose/deeppose_res152_coco_256x192-7df89a88_20210205.pth
     restart: "no"
     environment:
@@ -138,6 +138,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/td-hm_cpm_8xb32-210e_coco-384x288-165487b8_20221011.pth
     restart: "no"
     environment:
@@ -155,6 +156,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/hourglass/hourglass52_coco_384x384-be91ba2b_20200812.pth
     restart: "no"
     environment:
@@ -167,6 +169,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO-WholeBody
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/resnet/res152_coco_wholebody_384x288-eab8caa8_20201004.pth
     restart: "no"
     environment:
@@ -179,6 +182,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/integral_regression/coco/ipr_res50_dsnt-8xb64-210e_coco-256x256-441eedc0_20220913.pth
     restart: "no"
     environment:
@@ -191,6 +195,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO-WholeBody
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/hrnet/hrnet_w48_coco_wholebody_384x288-6e061c6a_20200922.pth
     restart: "no"
     environment:
@@ -203,6 +208,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/integral_regression/coco/ipr_res50_8xb64-210e_coco-256x256-a3898a33_20220913.pth
     restart: "no"
     environment:
@@ -215,18 +221,20 @@ services:
     build:
       context: ./pose/mmpose
       args:
-        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/hand/udp/hrnetv2_w18_onehand10k_256x256_udp-0d1b515d_20210330.pth
+        JOINT_NAMES: COCO-WholeBody
+        POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/hand/hrnetv2/hrnetv2_w18_coco_wholebody_hand_256x256-1c028db7_20210908.pth
     restart: "no"
     environment:
       OUTPUT_DIR: HRNetv2
-      POSE_CONFIG: configs/hand_2d_keypoint/topdown_heatmap/onehand10k/td-hm_hrnetv2-w18_udp-8xb64-210e_onehand10k-256x256.py
-      POSE_CHECKPOINT: hrnetv2_w18_onehand10k_256x256_udp-0d1b515d_20210330.pth
+      POSE_CONFIG: configs/hand_2d_keypoint/topdown_heatmap/coco_wholebody_hand/td-hm_hrnetv2-w18_8xb32-210e_coco-wholebody-hand-256x256.py
+      POSE_CHECKPOINT: hrnetv2_w18_coco_wholebody_hand_256x256-1c028db7_20210908.pth
     <<: [*gpu, *depends-on-block2, *input-volume]
 
   mspn:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/mspn/4xmspn50_coco_256x192-7b837afb_20201123.pth
     restart: "no"
     environment:
@@ -239,6 +247,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/scnet/scnet101_coco_384x288-0b6e631b_20200709.pth
     restart: "no"
     environment:
@@ -251,6 +260,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/topdown_heatmap/coco/td-hm_3xrsn50_8xb32-210e_coco-256x192-c3e3c4fe_20221013.pth
     restart: "no"
     environment:
@@ -263,6 +273,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/litehrnet/litehrnet30_coco_384x288-a3aef5c4_20210626.pth
     restart: "no"
     environment:
@@ -275,6 +286,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO-WholeBody
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/top_down/vipnas/vipnas_res50_wholebody_256x192_dark-67c0ce35_20211112.pth
     restart: "no"
     environment:
@@ -287,6 +299,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/integral_regression/coco/ipr_res50_debias-8xb64-210e_coco-256x256-055a7699_20220913.pth
     restart: "no"
     environment:
@@ -299,6 +312,7 @@ services:
     build:
       context: ./pose/mmpose
       args:
+        JOINT_NAMES: COCO
         POSE_CHECKPOINT_DOWNLOAD: https://download.openmmlab.com/mmpose/v1/body_2d_keypoint/simcc/coco/simcc_res50_8xb32-140e_coco-384x288-45c3ba34_20220913.pth
     restart: "no"
     environment:

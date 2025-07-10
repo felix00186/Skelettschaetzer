@@ -23,9 +23,13 @@ WORKDIR /app/mmpose
 RUN git checkout 71ec36ebd63c475ab589afc817868e749a61491f &&\
     pip install -e .
 COPY exec.py .
-COPY joint_names.json .
 ARG POSE_CHECKPOINT_DOWNLOAD
-RUN wget "${POSE_CHECKPOINT_DOWNLOAD}"
+RUN wget "${POSE_CHECKPOINT_DOWNLOAD}" &&\
+    mkdir _joint_names
+ARG JOINT_NAMES
+COPY _joint_names _joint_names
+RUN mv ./_joint_names/${JOINT_NAMES}.json joint_names.json &&\
+    rm -rd _joint_names
 
 
 CMD ["python", "exec.py"]
