@@ -9,8 +9,7 @@ RUN apt-get update && \
         git \
         wget \
         ffmpeg \
-        libyaml-dev \
-        locales && \
+        libyaml-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /app
@@ -34,21 +33,14 @@ ENV PATH=$CUDA_HOME/bin:$PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
 
-# TfPose von GitHub klonen
 RUN git clone --branch v0.7.5 https://github.com/facebookresearch/pytorch3d.git /tmp/pytorch3d
 WORKDIR /tmp/pytorch3d
 RUN pip install -e . &&\
-    git clone https://github.com/Jeff-sjtu/HybrIK.git /app/HybrIK
-WORKDIR /app/HybrIK
-RUN pip install -e --use-pep517 --config-settings editable_mode=compat .
-WORKDIR /app/HybrIK/model_files/smplx
-RUN wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_NEUTRAL.npz &&\
-    wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_FEMALE.npz &&\
-    wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_MALE.npz
-WORKDIR /app/HybrIK/model_files
-RUN wget https://huggingface.co/camenduru/buddi/resolve/55f84a18ff09950b4c53365bfd427c24263db875/romp/smplx_kid_template.npy
-WORKDIR /app/HybrIK
-ENV CFG=configs/256x192_adam_lr1e-3-hrw48_cam_2x_w_pw3d_3dhp.yaml
+    git clone https://github.com/MVIG-SJTU/AlphaPose.git /app/AlphaPose
+WORKDIR /app/AlphaPose
+RUN python setup.py build develop --user
+COPY coco_wholebody133_fast152_duc_regression_256x192.pth checkpoint.pth
+ENV CFG=configs/coco_wholebody/resnet/256x192_res152_lr1e-3_1x-duc.yaml
 
 COPY exec.sh .
 

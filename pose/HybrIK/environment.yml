@@ -11,7 +11,6 @@ dependencies:
   - iopath
   - pip
   - pip:
-      - gdown
       - torch==1.12.1+cu113 
       - torchvision==0.13.1+cu113
       - -f https://download.pytorch.org/whl/torch_stable.html

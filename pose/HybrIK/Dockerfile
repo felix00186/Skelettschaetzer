@@ -11,6 +11,7 @@ RUN apt-get update && \
         ffmpeg \
         libsm6 \
         libxext6 \
+        libx264-dev \
         libxrender-dev \
         libglib2.0-0 \
         libgtk2.0-dev \
@@ -54,8 +55,11 @@ RUN wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_NEUTRAL.np
     wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_MALE.npz
 WORKDIR /app/HybrIK/model_files
 RUN wget https://huggingface.co/camenduru/buddi/resolve/55f84a18ff09950b4c53365bfd427c24263db875/romp/smplx_kid_template.npy
+WORKDIR /app/HybrIK/pretrained_models
+COPY hybrikx_rle_hrnet.pth .
+WORKDIR /root/.cache/torch/hub/checkpoints
+RUN wget https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6c6.pth
 WORKDIR /app/HybrIK
-ENV CFG=configs/256x192_adam_lr1e-3-hrw48_cam_2x_w_pw3d_3dhp.yaml
 
 COPY exec.sh .
 

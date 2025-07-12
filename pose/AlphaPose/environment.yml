@@ -1,17 +1,22 @@
-name: hybrik
+name: alphapose
 channels:
   - pytorch3d
   - pytorch
   - conda-forge
   - defaults
+  - fvcore
+  - iopath
+  - bottler
 dependencies:
-  - python=3.8
+  - python=3.7
   - cudatoolkit=11.3
   - fvcore
   - iopath
+  - nvidiacub
   - pip
   - pip:
       - gdown
       - torch==1.12.1+cu113
       - torchvision==0.13.1+cu113
       - -f https://download.pytorch.org/whl/torch_stable.html
+      - cython
