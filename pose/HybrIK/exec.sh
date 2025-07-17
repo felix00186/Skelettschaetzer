@@ -8,6 +8,7 @@ OUTPUT_DIR="/data/HybrIK"
 for VIDEO_PATH in "$INPUT_DIR"/*.mp4; do
   # Nur weitermachen, wenn Datei existiert
   [ -e "$VIDEO_PATH" ] || continue
+  echo "Verarbeite $VIDEO_PATH ..."
 
   # Dateiname ohne Verzeichnis und Endung
   FILENAME=$(basename "$VIDEO_PATH" .mp4)

@@ -28,17 +28,19 @@ ENV CONDA_DEFAULT_ENV=alphapose
 ENV PATH=$CONDA_DIR/envs/alphapose/bin:$PATH
 ENV FORCE_CUDA="1"
 ENV CUDA_HOME=/usr/local/cuda
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64/:$LD_LIBRARY_PATH
 ENV PATH=$CUDA_HOME/bin:$PATH
+ENV LD_LIBRARY_PATH=$CONDA_DIR/envs/alphapose/lib:/usr/local/cuda/lib64/:$LD_LIBRARY_PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
 
+WORKDIR /app/detector/yolo
+COPY yolov3-spp.weights .
 RUN git clone --branch v0.7.5 https://github.com/facebookresearch/pytorch3d.git /tmp/pytorch3d
 WORKDIR /tmp/pytorch3d
 RUN pip install -e . &&\
     git clone https://github.com/MVIG-SJTU/AlphaPose.git /app/AlphaPose
 WORKDIR /app/AlphaPose
-RUN python setup.py build develop --user
+RUN pip install -e .
 COPY coco_wholebody133_fast152_duc_regression_256x192.pth checkpoint.pth
 ENV CFG=configs/coco_wholebody/resnet/256x192_res152_lr1e-3_1x-duc.yaml
 

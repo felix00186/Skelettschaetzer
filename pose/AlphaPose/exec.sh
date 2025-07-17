@@ -18,6 +18,6 @@ for VIDEO_PATH in "$INPUT_DIR"/*.mp4; do
          --outdir "$OUTPUT_DIR" \
          --cfg "$CFG" \
          --checkpoint checkpoint.pth \
-         --save-video --showbox
+         --save_video --showbox
 
 done

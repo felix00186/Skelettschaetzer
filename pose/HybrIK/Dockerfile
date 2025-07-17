@@ -33,12 +33,14 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 ENV PATH=$CONDA_DIR/bin:$PATH
 
 COPY environment.yml /app/environment.yml
-RUN conda env create -f /app/environment.yml
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main &&\
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r &&\
+    conda env create -f /app/environment.yml
 ENV CONDA_DEFAULT_ENV=hybrik
 ENV PATH=$CONDA_DIR/envs/hybrik/bin:$PATH
 ENV FORCE_CUDA="1"
 ENV CUDA_HOME=/usr/local/cuda
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=$CONDA_DIR/envs/hybrik/lib:/usr/local/cuda/lib64:/usr/local/cuda/extras/CUPTI/lib64:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
 ENV PATH=$CUDA_HOME/bin:$PATH
 ARG TORCH_CUDA_ARCH_LIST="Kepler;Kepler+Tesla;Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
@@ -62,5 +64,6 @@ RUN wget https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6
 WORKDIR /app/HybrIK
 
 COPY exec.sh .
+COPY demo_video_x.py scripts
 
 CMD ["/bin/bash", "exec.sh"]

@@ -10,13 +10,16 @@ channels:
 dependencies:
   - python=3.7
   - cudatoolkit=11.3
+  - cython
+  - ninja
   - fvcore
   - iopath
   - nvidiacub
+  - libgcc-ng
   - pip
   - pip:
       - gdown
       - torch==1.12.1+cu113
       - torchvision==0.13.1+cu113
+      - pycocotools==2.0.7
       - -f https://download.pytorch.org/whl/torch_stable.html
-      - cython

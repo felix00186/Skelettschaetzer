@@ -7,3 +7,5 @@ venv
 *.pkl
 *.h5
 */.ipynb_checkpoints
+*.weights
+*.pt
