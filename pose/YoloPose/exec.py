@@ -7,6 +7,9 @@ INPUT_DIR = '/data/input'
 OUTPUT_DIR = '/data/YoloPose'
 MODEL_PATH = 'yolov8x-pose.pt'
 
+with open("./joint_names.json", "r") as f:
+    JOINT_NAMES = json.load(f)
+
 def ensure_output_dir():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
@@ -26,8 +29,8 @@ def process_video(video_path, model):
     fps = cap.get(cv2.CAP_PROP_FPS)
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     writer = cv2.VideoWriter(out_video_path, fourcc, fps, (width, height))
-    pose_data = []
     frame_idx = 0
+    all_frames = []
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -35,18 +38,24 @@ def process_video(video_path, model):
         results = model(frame)
         annotated_frame = results[0].plot()
         writer.write(annotated_frame)
-        keypoints = results[0].keypoints
-        for i, kp in enumerate(keypoints.data.cpu().numpy()):
-            pose_data.append({
-                'frame': frame_idx,
-                'person_id': i,
-                'keypoints': kp.tolist()
-            })
+        keypoints_batch = results[0].keypoints
+        frame_data = []
+        person_count = len(keypoints_batch.conf) if keypoints_batch.conf is not None else 0
+        for i_person in range(person_count):
+            person_data = {}
+            for i_joint in range(len(keypoints_batch.conf[i_person])):
+                person_data[JOINT_NAMES[i_joint]] = {
+                    "x": float(keypoints_batch.xyn[i_person][i_joint][0]),
+                    "y": float(keypoints_batch.xyn[i_person][i_joint][1]),
+                    "conf": float(keypoints_batch.conf[i_person][i_joint])
+                }
+            frame_data.append(person_data)
+        all_frames.append(frame_data)
         frame_idx += 1
     cap.release()
     writer.release()
     with open(out_json_path, 'w') as f:
-        json.dump(pose_data, f, indent=2)
+        json.dump(all_frames, f)
 
 def main():
     ensure_output_dir()

@@ -14,6 +14,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt &&\
     wget https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8x-pose.pt
 COPY exec.py .
+COPY joint_names.json .
 
 
 CMD ["python", "exec.py"]

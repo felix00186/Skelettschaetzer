@@ -49,3 +49,8 @@ Zitiert werden kann folgendermaßen:
   url          = {https://doi.org/10.5281/zenodo.7347926},
 }
 ```
+
+Es existiert (noch) keine wissenschaftliche Publikation, da der gesamte Aufwand in die Softwareentwicklung gesteckt wurde. Deshalb gibt es nur das Repository zum Zitieren.
+
+## Besonderheiten
+YoloPose ist besonders einfach zu handhaben, was die Hardware betrifft. Egal, ob man dem Docker-Container Zugang zu einer GPU gibt oder nicht - das Programm läuft. Es muss nicht mal eine Einstellung geändert werden. Hat der Container Zugang zur GPU, wird diese auch genutzt und die Verarbeitung läuft deutlich schneller. Wenn nicht, dann läuft es langsamer ... aber es funktioniert!
