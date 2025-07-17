@@ -24,5 +24,6 @@ Klicken Sie sich für mehr Informationen durch.
 │   └ ViPNAS
 ├ TfPose
 ├ OpenPose
-└ EfficientPose (kein Skelettschätzer)
+├ EfficientPose (kein Skelettschätzer)
+└ YoloPose
 ```

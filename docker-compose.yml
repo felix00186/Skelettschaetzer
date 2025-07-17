@@ -74,6 +74,11 @@ x-depends-block-4: &depends-on-block4
     openpose:
       condition: service_completed_successfully
 
+x-depends-on-block-5: &depends-on-block-5
+  depends_on:
+    yolo:
+      condition: service_completed_successfully
+
 
 services:
 
@@ -330,3 +335,8 @@ services:
     build: ./pose/OpenPose
     restart: "no"
     <<: [*gpu, *depends-on-block3, *input-volume]
+
+  yolo:
+    build: ./pose/YoloPose
+    restart: "no"
+    <<: [*gpu, *depends-on-block4, *input-volume]
