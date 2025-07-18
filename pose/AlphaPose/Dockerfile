@@ -8,10 +8,25 @@ RUN apt-get update && \
         python3-dev \
         git \
         wget \
-        ffmpeg \
-        libyaml-dev && \
-    apt-get clean && \
+        libsm6 \
+        libxext6 \
+        libx264-dev \
+        libxrender-dev \
+        libglib2.0-0 \
+        libgtk2.0-dev \
+        pkg-config \
+        libopenblas-dev \
+        g++ \
+        gcc \
+        libomp-dev \
+        libyaml-dev &&\
+    apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
+RUN wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz && \
+    tar -xJf ffmpeg-release-amd64-static.tar.xz && \
+    mv ffmpeg-*-static/ffmpeg /usr/local/bin/ffmpeg && \
+    chmod +x /usr/local/bin/ffmpeg && \
+    rm -rf ffmpeg-*-static*
 WORKDIR /app
 
 # Miniconda installieren
@@ -23,7 +38,9 @@ RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 ENV PATH=$CONDA_DIR/bin:$PATH
 
 COPY environment.yml /app/environment.yml
-RUN conda env create -f /app/environment.yml
+RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main &&\
+    conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r &&\
+    conda env create -f /app/environment.yml
 ENV CONDA_DEFAULT_ENV=alphapose
 ENV PATH=$CONDA_DIR/envs/alphapose/bin:$PATH
 ENV FORCE_CUDA="1"

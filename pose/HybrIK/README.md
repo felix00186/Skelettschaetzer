@@ -1,4 +1,7 @@
 # HybrIK
+HybrIK ist ein Modell zur 3D-Pose-Schätzung, das inverse Kinematik mit Deep Learning kombiniert. Es schätzt nicht direkt die 3D-Pose, sondern optimiert sie in einem differentiellen IK-Framework, sodass die Gelenkpositionen konsistent zum geschätzten 2D-Output bleiben. Dabei wird der SMPL-Body-Model-Parameterraum genutzt, um plausible menschliche Posen mit physikalischen Einschränkungen zu rekonstruieren. HybrIK wurde so konzipiert, dass es sowohl präzise als auch anatomisch sinnvolle Posen liefert – insbesondere bei selbstverdeckten Körperteilen.
+
+<img height="400px" src="demo.gif">
 
 ## Installation
 Bitte laden Sie diese Datei von Google Drive herunter und legen Sie sie in dieses Verzeichnis.

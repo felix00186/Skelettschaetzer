@@ -15,9 +15,9 @@ for VIDEO_PATH in "$INPUT_DIR"/*.mp4; do
   FILENAME=$(basename "$VIDEO_PATH" .mp4)
   OUTPUT_PATH="$OUTPUT_DIR/$FILENAME.mp4"
 
-  python scripts/demo_video_x.py --video-name "$VIDEO_PATH" --out-dir "$CACHE_DIR" --save-img
+  python scripts/demo_video_x.py --video-name "$VIDEO_PATH" --out-dir "$CACHE_DIR"
 
 done
 
 mkdir -p "$OUTPUT_DIR"
-mv "scripts/$CACHE_DIR/*" "$OUTPUT_DIR"
+mv $CACHE_DIR/* "$OUTPUT_DIR"

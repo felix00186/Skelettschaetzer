@@ -26,5 +26,5 @@ Klicken Sie sich für mehr Informationen durch.
 ├ OpenPose
 ├ EfficientPose (kein Skelettschätzer)
 ├ HybrIK (kein Skelettschätzer)
-└ AlphaPose
+├ AlphaPose
 ```
