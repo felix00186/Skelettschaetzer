@@ -8,7 +8,6 @@ RUN apt-get update && \
         python3-dev \
         git \
         wget \
-        ffmpeg \
         libsm6 \
         libxext6 \
         libx264-dev \
@@ -19,9 +18,15 @@ RUN apt-get update && \
         libopenblas-dev \
         g++ \
         gcc \
-        libomp-dev && \
-    apt-get clean && \
+        libomp-dev \
+        libyaml-dev &&\
+    apt-get clean &&\
     rm -rf /var/lib/apt/lists/*
+RUN wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz && \
+    tar -xJf ffmpeg-release-amd64-static.tar.xz && \
+    mv ffmpeg-*-static/ffmpeg /usr/local/bin/ffmpeg && \
+    chmod +x /usr/local/bin/ffmpeg && \
+    rm -rf ffmpeg-*-static*
 WORKDIR /app
 
 # Miniconda installieren
@@ -50,7 +55,8 @@ WORKDIR /tmp/pytorch3d
 RUN pip install -e . &&\
     git clone https://github.com/Jeff-sjtu/HybrIK.git /app/HybrIK
 WORKDIR /app/HybrIK
-RUN pip install -e .
+RUN sed -i "s-{opt.out_dir}/res_-{opt.out_dir}/-g" scripts/demo_video_x.py &&\
+    pip install -e .
 WORKDIR /app/HybrIK/model_files/smplx
 RUN wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_NEUTRAL.npz &&\
     wget https://huggingface.co/camenduru/SMPLer-X/resolve/main/SMPLX_FEMALE.npz &&\
@@ -64,6 +70,5 @@ RUN wget https://download.pytorch.org/models/fasterrcnn_resnet50_fpn_coco-258fb6
 WORKDIR /app/HybrIK
 
 COPY exec.sh .
-COPY demo_video_x.py scripts
 
 CMD ["/bin/bash", "exec.sh"]
