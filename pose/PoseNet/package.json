@@ -1,0 +1,10 @@
+{
+  "name": "posenet-video-processor",
+  "version": "1.0.0",
+  "dependencies": {
+    "@tensorflow-models/posenet": "^2.2.2",
+    "@tensorflow/tfjs-node": "^4.15.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "canvas": "^2.11.2"
+  }
+}

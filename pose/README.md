@@ -25,5 +25,6 @@ Klicken Sie sich für mehr Informationen durch.
 ├ TfPose
 ├ OpenPose
 ├ EfficientPose (kein Skelettschätzer)
-└ YoloPose
+├ YoloPose
+└ PoseNet
 ```
